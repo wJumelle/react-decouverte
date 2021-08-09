@@ -8,8 +8,8 @@ Version de React lors de la découverte : **v16.13.1**.
 ## Sommaire
 1. [**Objectifs**](#objectifs)
 2. [**Introduction**](#introduction)
-3. Guide étape par étape : [**Introduction à JSX**](#introduction-a-jsx)
-4. Guide étape par étape : [**Le rendu des éléments**](#le-rendu-des-elements)
+3. Guide étape par étape : [**Introduction à JSX**](#introduction-à-jsx)
+4. Guide étape par étape : [**Le rendu des éléments**](#le-rendu-des-éléments)
 5. Guide étape par étape : [**Composants et props**](#composants-et-props)
 
 ## Objectifs
@@ -286,7 +286,7 @@ setInterval(tick, 1000);
 
 Le code ci-dessus va appeler la méthode ReactDOM.render() toutes les secondes, se faisant, il va re-générer le noeud racine de l'application 
 toutes les secondes.  
-Pourtant, si l'on observe la console de notre navigateur, nous pourrons observer que seul le noeud <h2> est réécrit à chaque appel. 
+Pourtant, si l'on observe la console de notre navigateur, nous pourrons observer que seul le noeud `<h2>` est réécrit à chaque appel. 
 
 ## Composants et props
 Qu'est ce qu'un composant React ? Un composant React c'est tout simple une brique de l'interface utilisateur. C'est qui va nous permettre 
@@ -342,13 +342,13 @@ ReactDOM.render(
 ```
 
 Voici ce qui se produit dans notre contexte : 
-1. la méthode ReactDOM.render() est appelé avec en paramètre l'élément *elemComposants* qui est un élément React de type *componsants* <Welcome />. 
-2. React appelle le composant <Welcome /> et lui transmets les props {name = 'Wilfried'}
-3. le composant <Welcome /> retourne l'élément React <h1>Bonjour, {props.name}</h1> où {props.name} vaut Wilfried.
-4. ReactDOM met à jours efficacement le DOM pour correspond à la valeur retournée par le composant <Welcome />
+1. la méthode ReactDOM.render() est appelé avec en paramètre l'élément *elemComposants* qui est un élément React de type *componsants* `<Welcome />.` 
+2. React appelle le composant `<Welcome />` et lui transmets les props {name = 'Wilfried'}
+3. le composant `<Welcome />` retourne l'élément React `<h1>Bonjour, {props.name}</h1>` où {props.name} vaut Wilfried.
+4. ReactDOM met à jours efficacement le DOM pour correspond à la valeur retournée par le composant `<Welcome />`
 
 > 💡 Petit point autour des règles de nommages : React considère les composants commençant par une minuscule comme étant des balises du DOM. 
-> Par ex : <div /> sera perçu comme une balise HTML <div></div>, tandis que <Welcome /> représente lui un composant React. 
+> Par ex : `<div />` sera perçu comme une balise HTML `<div></div>`, tandis que `<Welcome />` représente lui un composant React. 
 > Autre particularité lors de l'appel d'un composant, il faut s'assurer que ce composant soit bien disponible et présent dans la portée 
 > courante ! 
 > Pour plus d'information autour de cette convention de nommage, vous pouvez lire la documentaiton [**JSX en profondeur**](https://fr.reactjs.org/docs/jsx-in-depth.html#user-defined-components-must-be-capitalized)
@@ -357,10 +357,10 @@ Voici ce qui se produit dans notre contexte :
 Comme dit plus haut, la plus part des applications récentes ne font appel qu'une seule fois à la méthode ReactDOM.render(), comment pouvons-nous 
 expliquer cela ? 
 Tout simplement car un composant peut faire **référence** à d'autres composants. Ce qui nous permet par exemple, de mettre en place un composant 
-<Formulaire /> dans lequel nous ferons références à plusieurs composants <Champ />.
+`<Formulaire />` dans lequel nous ferons références à plusieurs composants `<Champ />`.
 Ce qu'il faut comprendre, c'est que dans React tous les éléments de l'interface utilisateur sont exprimés par des composants.
 
-En règle générale, les nouvelles applications React comporteront un seul et unique composant <App /> à la racine. Ce sera ce composant que l'on 
+En règle générale, les nouvelles applications React comporteront un seul et unique composant `<App />` à la racine. Ce sera ce composant que l'on 
 générera via la méthode ReactDOM.render().
 
 ```
@@ -392,7 +392,7 @@ Il est très important de toujours évaluer la taille des composants que l'on cr
 Si un élément intervant dans un composant est redéfini dans un, deux ou trois autres composants, c'est que l'on peut extraire cette brique pour en faire 
 un composant isolé.
 
-Prenons ici exemple sur un composant <Comment /> dont le but serait d'afficher un commentaire dans un réseau social. 
+Prenons ici exemple sur un composant `<Comment />` dont le but serait d'afficher un commentaire dans un réseau social. 
 
 ```
 function Comment(props) {
