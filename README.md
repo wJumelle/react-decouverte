@@ -10,6 +10,7 @@ Version de React lors de la découverte : **v16.13.1**.
 2. [**Introduction**](#introduction)
 3. Guide étape par étape : [**Introduction à JSX**](#introduction-a-jsx)
 4. Guide étape par étape : [**Le rendu des éléments**](#le-rendu-des-elements)
+5. Guide étape par étape : [**Composants et props**](#composants-et-props)
 
 ## Objectifs
 Les objectifs à la suite de la découverte de la documentation vont être simple : 
@@ -270,18 +271,196 @@ Et cela se produit même si l'on demande à React de re-générer l'ensemble du 
 
 ```
 function tick() {
-    const element = (
-        <div>
-        <h1>Bonjour, monde !</h1>
-        <h2>Il est {new Date().toLocaleTimeString()}.</h2>
-        </div>
-    );
-    ReactDOM.render(element, document.getElementById('app'));
+  const element = (
+    <div>
+    <h1>Bonjour, monde !</h1>
+    <h2>Il est {new Date().toLocaleTimeString()}.</h2>
+    </div>
+  );
+  ReactDOM.render(element, document.getElementById('app-elements'));
 }
-  
+
+tick();
 setInterval(tick, 1000);
 ```
 
 Le code ci-dessus va appeler la méthode ReactDOM.render() toutes les secondes, se faisant, il va re-générer le noeud racine de l'application 
 toutes les secondes.  
 Pourtant, si l'on observe la console de notre navigateur, nous pourrons observer que seul le noeud <h2> est réécrit à chaque appel. 
+
+## Composants et props
+Qu'est ce qu'un composant React ? Un composant React c'est tout simple une brique de l'interface utilisateur. C'est qui va nous permettre 
+de subdiviser cette interface en élément totalement indépendants et réutilisables. Chacun de ces éléments pourra donc être considérée de 
+manière isolée. 
+
+==> [**Documentation détaillée des composants**](https://fr.reactjs.org/docs/react-component.html)
+
+Le concept des composants est simple, nous avons des **propriétés (props) en entrée** et en **sortie nous obtenons un élément React**.
+
+### Fonctions composants et composants à base de classe
+Il existe **deux façons différentes** de définir des composants en React.  
+1. via la création d'une fonction JavaScript = fonctions composants
+2. via le création d'une classe ES6
+
+La méthode la plus simple reste la première, c'est à dire celle qui consiste à écrire une fonction JavaScript pour produire un composant React. 
+La fonction suivante est un composant React valide car elle accepte en arguments des propriétées props et retourne un élément React.
+
+```
+function Welcome(props) {
+  return <h1>Bonjour, {props.name}</h1>
+}
+```
+
+Voici la version de la fonction ci-dessus écrite à l'aide d'une classe ES6.
+
+```
+class Welcome extends React.Component {
+  render() {
+    return <h1>Bonjour, {this.props.name}</h1>;
+  }
+}
+```
+
+Ces deux composants sont **équivalents du point de vue de React**, nous obtiendrons au final le même élément React.
+
+### Produire le rendu d'un composant
+Jusqu'ici nous nous sommes servi de la méthode ReactDOM.render() uniquement pour affichage des éléments React représentant des balises du DOM. 
+ReactDOM.render() peut aussi afficher des éléments React représentant des composants définis par l'utilisateur.  
+Lorsque React va rencontrer un élément React de type composant, il va **transmettre les attributs JSX et les enfants à ce composant** sous la 
+forme d'un objet unique : **props**.
+
+```
+function Welcome(props) {
+  return <h1>Bonjour, {props.name}</h1>;
+}
+
+const elemComposants = <Welcome name="Wilfried" />;
+ReactDOM.render(
+  elemComposants,
+  document.getElementById('app-composants')
+);
+```
+
+Voici ce qui se produit dans notre contexte : 
+1. la méthode ReactDOM.render() est appelé avec en paramètre l'élément *elemComposants* qui est un élément React de type *componsants* <Welcome />. 
+2. React appelle le composant <Welcome /> et lui transmets les props {name = 'Wilfried'}
+3. le composant <Welcome /> retourne l'élément React <h1>Bonjour, {props.name}</h1> où {props.name} vaut Wilfried.
+4. ReactDOM met à jours efficacement le DOM pour correspond à la valeur retournée par le composant <Welcome />
+
+> 💡 Petit point autour des règles de nommages : React considère les composants commençant par une minuscule comme étant des balises du DOM. 
+> Par ex : <div /> sera perçu comme une balise HTML <div></div>, tandis que <Welcome /> représente lui un composant React. 
+> Autre particularité lors de l'appel d'un composant, il faut s'assurer que ce composant soit bien disponible et présent dans la portée 
+> courante ! 
+> Pour plus d'information autour de cette convention de nommage, vous pouvez lire la documentaiton [**JSX en profondeur**](https://fr.reactjs.org/docs/jsx-in-depth.html#user-defined-components-must-be-capitalized)
+
+### Composition des composant
+Comme dit plus haut, la plus part des applications récentes ne font appel qu'une seule fois à la méthode ReactDOM.render(), comment pouvons-nous 
+expliquer cela ? 
+Tout simplement car un composant peut faire **référence** à d'autres composants. Ce qui nous permet par exemple, de mettre en place un composant 
+<Formulaire /> dans lequel nous ferons références à plusieurs composants <Champ />.
+Ce qu'il faut comprendre, c'est que dans React tous les éléments de l'interface utilisateur sont exprimés par des composants.
+
+En règle générale, les nouvelles applications React comporteront un seul et unique composant <App /> à la racine. Ce sera ce composant que l'on 
+générera via la méthode ReactDOM.render().
+
+```
+function Welcome(props) {
+  return <h1>Bonjour, {props.nam} !</h1>
+}
+
+function App() {
+  return (
+    <div>
+      <Welcome name="Wilfried" />
+      <Welcome name="Elodie" />
+      <Welcome name="Gwendoline" />
+    </div>
+  )
+}
+
+ReactDOM.render(
+  <App />,
+  document.getElementById('app-composantsApp')
+);
+```
+
+### Extraire des composants
+Lorsqu'un composant devient trop important et qu'il devient complexe à lire et à maintenir, c'est que l'on peut mieux faire ! Comment ?  
+En cherchant à **scinder ce composant en plusieurs briques distinctes** que l'on pourra réutiliser séparément du contexte de ce composant.  
+
+Il est très important de toujours évaluer la taille des composants que l'on créé mais aussi la réutilisabilité de certains éléments de ce composant.  
+Si un élément intervant dans un composant est redéfini dans un, deux ou trois autres composants, c'est que l'on peut extraire cette brique pour en faire 
+un composant isolé.
+
+Prenons ici exemple sur un composant <Comment /> dont le but serait d'afficher un commentaire dans un réseau social. 
+
+```
+function Comment(props) {
+  return (
+    <div className="Comment">
+      <div className="UserInfo">
+        <img className="Avatar"
+          src={props.author.avatarUrl}
+          alt={props.author.name}
+        />
+        <div className="UserInfo-name">
+          {props.author.name}
+        </div>
+      </div>
+      <div className="Comment-text">
+        {props.text}
+      </div>
+      <div className="Comment-date">
+        {formatDate(props.date)}
+      </div>
+    </div>
+  );
+}
+```
+
+A la première lecture on se rend compte de deux choses : nous avons des informations sur le message et sur son auteur.  
+Les informations sur l'auteur pourraient être réutilisés ailleurs, par exemple lors de l'affichage de son profil.  
+Nous allons donc chercher à extraire ce composant afin de l'isoler, comme ceci : 
+
+```
+Etape 1 : Création du composant <Avatar />
+function Avatar(props) {
+  return (
+    <img className="Avatar"
+      src={props.user.avatarUrl}
+      alt={props.user.name}
+    />
+  );
+}
+
+Etape 2 : Création du composant <UserInfo />
+function UserInfo(props) {
+  return (
+    <div className="UserInfo">
+      <Avatar user={props.user} />
+      <div className="UserInfo-name">
+        {props.user.name}
+      </div>
+    </div>
+  );
+}
+
+Etape 3 : Update du composant <Comment />
+function Comment(props) {
+  return (
+    <div className="Comment">
+      <UserInfo user={props.author} />
+      <div className="Comment-text">
+        {props.text}
+      </div>
+      <div className="Comment-date">
+        {formatDate(props.date)}
+      </div>
+    </div>
+  );
+}
+```
+
+### Les props sont en lecture seul
+Point très importants, que nous déclarions les composants à l'aide d'une fonction ou d'une classe ES6, ce dernier **ne doit jamais modifier ses propres props**. 
+**❗ Tout composant React doit agir comme une fonction pure vis-à-vis de ses props.**
