@@ -9,6 +9,7 @@ Version de React lors de la découverte : **v16.13.1**.
 1. [**Objectifs**](#objectifs)
 2. [**Introduction**](#introduction)
 3. Guide étape par étape : [**Introduction à JSX**](#introduction-a-jsx)
+4. Guide étape par étape : [**Le rendu des éléments**](#le-rendu-des-elements)
 
 ## Objectifs
 Les objectifs à la suite de la découverte de la documentation vont être simple : 
@@ -225,3 +226,62 @@ utilise pour construire le DOM et le maintenir à jour.
 ### JSX et la sécurité
 Une autre feature intéressante du JSX étant la **vérification** et l'**échappement des données** avant d'effectuer le rendu par React.  
 Ceci étant fait, on peut donc se servir des données provenant d'un input en affichage, sans craindre les problèmes d'injections (XSS par exemple).
+
+## Le rendu des éléments
+Les éléments sont les **blocs élémentaires** d'une application React. **Un élément n'est pas un composant** !  
+Les éléments sont la base même des composants React. 
+
+Les éléments React, contraitement aux éléments du DOM, sont peu coûteux à créer, car très basique dans leur conception.  
+**React DOM** va se charger de mettre à jour le DOM afin qu'il correspond aux éléments React créés. 
+
+### Afficher un élément dans le DOM
+Les applications développées en React ont généralement un DOM natif très simple, qui est composé d'**un et unique noeud DOM "racine"**.  
+C'est à l'intérieur de ce noeud DOM "racine" que tout sera généré par **ReactDOM**. 
+
+Pour effectuer le rendu d'un élément React à l'intérieur d'un noeud DOM "racine", rien de plus simple : il suffit d'utiliser la méthode suivante. 
+```
+HTML
+<div id="app"></div>
+
+JS
+const elem = <h1>Un super titre pour bien commencer mon application</h1>
+ReactDOM.render(elem, document.getElementById('app'));
+```
+
+La méthode **ReactDOM.render()** prend 2 paramètres : l'élément à générer à l'intérieur du noeud "racine" et ce même noeud "racine".  
+[**Documentation de la méthode ReactDOM.render()**](https://fr.reactjs.org/docs/react-dom.html#render).
+
+### Mettre à jours un élément déjà affiché
+Les éléments React sont [**immuables**](https://fr.wikipedia.org/wiki/Objet_immuable), c'est à dire qu'une fois créé ils ne peuvent plus être 
+modifié. Que ce soit, l'élément lui-même, ses enfants ou bien ses attributs.  
+Pour imager les propos, un **élément React c'est comme un screenshot d'un film à un instant T**, l'élément représente donc l'UI à un point 
+précis dans le temps. 
+
+Avec nos connaissances actuelles, si l'on veut modifier cette UI, il faut donc créer un nouvel élément (ou bien le re-générer) et le passer 
+de nouveau à la méthode ReactDOM.render().
+
+> 💡 En pratique, la plus part des applications React n'appellent la méthode ReactDOM.render() qu'une seule fois au sein de leur code. 
+> C'est là qu'intervient les **composants React**.
+
+### L'intelligence de React autour de la mise à jours des contenus
+React optimise les opérations qu'il doit effectuer sur le DOM en **comparant l'état précédent et l'état qu'on lui transmet**.  
+De cette comparaison il va observer les variations et appliquer la mise à jour uniquement là où cela est nécessaire. 
+Et cela se produit même si l'on demande à React de re-générer l'ensemble du noeud "racine". 
+
+```
+function tick() {
+    const element = (
+        <div>
+        <h1>Bonjour, monde !</h1>
+        <h2>Il est {new Date().toLocaleTimeString()}.</h2>
+        </div>
+    );
+    ReactDOM.render(element, document.getElementById('app'));
+}
+  
+setInterval(tick, 1000);
+```
+
+Le code ci-dessus va appeler la méthode ReactDOM.render() toutes les secondes, se faisant, il va re-générer le noeud racine de l'application 
+toutes les secondes.  
+Pourtant, si l'on observe la console de notre navigateur, nous pourrons observer que seul le noeud <h2> est réécrit à chaque appel. 
