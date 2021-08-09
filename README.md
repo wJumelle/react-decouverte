@@ -462,5 +462,5 @@ function Comment(props) {
 ```
 
 ### Les props sont en lecture seul
-Point très importants, que nous déclarions les composants à l'aide d'une fonction ou d'une classe ES6, ce dernier **ne doit jamais modifier ses propres props**. 
+Point très importants, que nous déclarions les composants à l'aide d'une fonction ou d'une classe ES6, ce dernier **ne doit jamais modifier ses propres props**.  
 **❗ Tout composant React doit agir comme une fonction pure vis-à-vis de ses props.**
