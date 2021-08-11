@@ -5,12 +5,15 @@ Version de React lors de la découverte : **v16.13.1**.
 
 ==> Lien vers [**Glossaire React**](https://fr.reactjs.org/docs/glossary.html)
 
+==> Lien vers [**Les fondamentaux**](https://fr.reactjs.org/docs/hello-world.html)
+
 ## Sommaire
 1. [**Objectifs**](#objectifs)
 2. [**Introduction**](#introduction)
 3. Guide étape par étape : [**Introduction à JSX**](#introduction-à-jsx)
 4. Guide étape par étape : [**Le rendu des éléments**](#le-rendu-des-éléments)
 5. Guide étape par étape : [**Composants et props**](#composants-et-props)
+6. Guide étape par étape : [**État et cycle de vie**](#état-et-cycle-de-vie)
 
 ## Objectifs
 Les objectifs à la suite de la découverte de la documentation vont être simple : 
@@ -96,7 +99,7 @@ ReactDOM.render(
 );
 ```
 
-## Introduction à JSX
+## Introduction à JSX ([doc](https://fr.reactjs.org/docs/introducing-jsx.html))
 ```
 const element = <h1>Bonjour, monde !</h1>;
 ```
@@ -228,7 +231,7 @@ utilise pour construire le DOM et le maintenir à jour.
 Une autre feature intéressante du JSX étant la **vérification** et l'**échappement des données** avant d'effectuer le rendu par React.  
 Ceci étant fait, on peut donc se servir des données provenant d'un input en affichage, sans craindre les problèmes d'injections (XSS par exemple).
 
-## Le rendu des éléments
+## Le rendu des éléments ([doc](https://fr.reactjs.org/docs/rendering-elements.html))
 Les éléments sont les **blocs élémentaires** d'une application React. **Un élément n'est pas un composant** !  
 Les éléments sont la base même des composants React. 
 
@@ -250,7 +253,7 @@ ReactDOM.render(elem, document.getElementById('app'));
 ```
 
 La méthode **ReactDOM.render()** prend 2 paramètres : l'élément à générer à l'intérieur du noeud "racine" et ce même noeud "racine".  
-[**Documentation de la méthode ReactDOM.render()**](https://fr.reactjs.org/docs/react-dom.html#render).
+==> [**Documentation de la méthode ReactDOM.render()**](https://fr.reactjs.org/docs/react-dom.html#render).
 
 ### Mettre à jours un élément déjà affiché
 Les éléments React sont [**immuables**](https://fr.wikipedia.org/wiki/Objet_immuable), c'est à dire qu'une fois créé ils ne peuvent plus être 
@@ -288,7 +291,7 @@ Le code ci-dessus va appeler la méthode ReactDOM.render() toutes les secondes, 
 toutes les secondes.  
 Pourtant, si l'on observe la console de notre navigateur, nous pourrons observer que seul le noeud `<h2>` est réécrit à chaque appel. 
 
-## Composants et props
+## Composants et props ([doc](https://fr.reactjs.org/docs/components-and-props.html))
 Qu'est ce qu'un composant React ? Un composant React c'est tout simple une brique de l'interface utilisateur. C'est qui va nous permettre 
 de subdiviser cette interface en élément totalement indépendants et réutilisables. Chacun de ces éléments pourra donc être considérée de 
 manière isolée. 
@@ -464,3 +467,270 @@ function Comment(props) {
 ### Les props sont en lecture seul
 Point très importants, que nous déclarions les composants à l'aide d'une fonction ou d'une classe ES6, ce dernier **ne doit jamais modifier ses propres props**.  
 **❗ Tout composant React doit agir comme une fonction pure vis-à-vis de ses props.**
+
+## État et cycle de vie ([doc](https://fr.reactjs.org/docs/state-and-lifecycle.html))
+
+==> [**Documentation de la référence API des composants**](https://fr.reactjs.org/docs/react-component.html)
+
+Dans l'exemple précédent autour de l'horloge, nous avions vu que notre élément était mis à jours à l'aide d'un interval JavaScript 
+mis en place qui toutes les X secondes appelait la fonction qui générait le JSX et effectuée l'appel à la méthode ReactDOM.render(). 
+
+Cette façon de faire n'est pas optimale, en effet, tout est dispersé dans notre code et cela force à isoler l'appel à la méthode de 
+rendu. Or nous l'avons vu précédement, il est souhaitable d'appeler cette méthode **qu'une seule fois** dans l'application.
+
+Il va donc falloir trouver un autre moyen de concevoir notre composant, afin que celui-ci soit totalement **isolé** et potentiellement 
+**réutilisable**.  
+Ce composant aura pour fonction de mettre en place son propre minuteur et de se mettre à jour automatiquement. Il sera **indépendant**. 
+
+Ainsi, pour débuter ce travail, nous pouvons passer de ce code : 
+
+```
+function tick() {
+  const element = (
+    <div>
+      <h1>Bonjour, monde !</h1>
+      <h2>Il est {new Date().toLocaleTimeString()}.</h2>
+    </div>
+  );
+  ReactDOM.render(
+    element,
+    document.getElementById('root')
+  );
+}
+
+tick();
+setInterval(tick, 1000);
+```
+
+à celui-ci : 
+
+```
+function Clock(props) {
+  return (
+    <div>
+      <h1>Bonjour, monde !</h1>
+      <h2>Il est {props.date.toLocaleTimeString()}.</h2>
+    </div>
+  );
+}
+
+function tick() {
+  ReactDOM.render(
+    <Clock date={new Date()} />,
+    document.getElementById('root')
+  );
+}
+
+setInterval(tick, 1000);
+```
+
+Ici, on peut voir que le composant `<Clock />` n'est pour l'instant pas encore indépendant. Ce que nous souhaiterions obtenir, serait 
+plutot ceci : 
+
+```
+ReactDOM.render(
+  <Clock />,
+  document.getElementById('root')
+);
+```
+
+Dans cette version, la méthode ReactDOM.render() n'est plus comprise dans l'intervale JavaScript. Cet interval va être géré au niveau 
+du composant, tout comme le rafraichîssement de son contenu. 
+
+Pour implémenter ça, nous avons besoin d'ajouter un **état local** au composant `<Clock />`.  
+L'état local est assez similaire aux props, mais est **privé** et complétement contrôlé par le composant.
+
+### Convertir une fonction en classe
+Pour convertir un composant fonctionnel en un composant de type classe, il suffit de faire quelques réajustements.  
+1. **Création de la classe ES6** qui portera le nom de notre composant et qui **étendra React.Component**
+2. **Créer une méthode render()** dans laquelle on viendra déposer le code JSX
+3. **Remplacer props par this.props**
+
+Ce qui donne :
+```
+class Clock extends React.Component {
+  render() {
+    return (
+      <div>
+        <h1>États et cycle de vie - format class</h1>
+        <h2>Il est {this.props.date.toLocaleTimeString()}.</h2>
+      </div>
+    )
+  }
+} 
+```
+
+Ce faisant, la méthode ``render()`` du composant `<Clock />` sera appelé à chaque fois qu'une variation de ce composant sera 
+détectée par React. 
+Tant que l'on exploite le rendu du composant `<Clock />` dans le même noeud DOM "racine", une seule instance de la classe **Clock** 
+sera utilisée. Ce qui va nous permettre d'utiliser les fonctionnalités supplémentaires suivantes : **l'état local** et les méthodes de 
+**cycle de vie**.
+
+### Ajouter un état local à une classe
+Il va de nouveau falloir suivre quelques étapes pour réussir à intégrer la fonctionnalité d'état local. 
+1. **Modifier l'appel à la variable** qui correspond à la date : passer de `this.props.date` à `this.state.date`
+2. **Créer le constructeur de notre classe** et y passer en paramètre les **props**
+3. **Supprimer l'initialisation de la date** dans l'appel au composant
+
+Ce qui nous donne : 
+```
+class Clock extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { date: new Date(); }
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>États et cycle de vie - format class</h1>
+        <h2>Il est {this.state.date.toLocaleTimeString()}.</h2>
+      </div>
+    )
+  }
+}
+
+function tick() {
+  ReactDOM.render(
+    <Clock />,
+    document.getElementById('root')
+  );
+}
+
+setInterval(tick, 1000);
+```
+
+> ❗ Les constructeurs de classe doivent toujours passer props en paramètres. 
+> ❗ A l'intérieur de ces mêmes constructeurs nous devons toujours appeler le constructeur parent de notre classe en y passant 
+> les props en paramètres. Pour cela nous utilisons le mot-clé `super(props)` ([**doc MDN**](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Operators/super)).
+
+### Ajouter des méthodes de cycle de vie à une classe
+Dans des applications avec de nombreux composants, il est primordiale de veiller à optimiser les ressources utilisées par ces composants.  
+Ainsi, si un compostant est détruit il faut libérer les ressources qui lui étaient associées.  
+
+Nous désirons internaliser à notre composant `<Clock />` la gestion et la mise en place du minuteur.  
+Cette création surviendra la première fois que notre composant sera ajouté au DOM.  
+Dans React on appelle cette phase **le montage**.
+
+A l'inverse, lorsqu'un composant est détruit / supprimé du DOM, on appelle cette phase **le démontage**. 
+Au cours de cette phase de démontage, il faudra veiller à la suppression du minuteur. 
+
+Les phases de montage et de démontage sont "écoutées" dans React par deux méthodes spéciales : `componentDidMount()` et `componentDidUnMount()` 
+pour le démontage.
+
+Ce qui nous donne le code suivant : 
+
+```
+class Clock extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { date: new Date() }
+  }
+
+  componentDidMount() {
+    this.intervalID = setInterval(
+      () => {
+        this.setState({ date: new Date() })
+      }, 1000
+    );
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.intervalID);
+  }
+
+  render() {
+    return (
+    <div>
+      <h1>États et cycle de vie - format class cycle de vie</h1>
+      <h2>Il est {this.state.date.toLocaleTimeString()}.</h2>
+    </div>
+    )
+  }
+}
+
+ReactDOM.render(
+  <Clock />,
+  document.getElementById('app-etatsCycle')
+);
+```
+
+Pour résumer ce qu'il se produit : 
+1. Le composant `<Clock />` est passé à la méthode `ReactDOM.render()`. Se faisant React appelle le constructeur du composant et 
+initialise ainsi `this.state` en y ajoutant la valeur de la date à laquelle le constructeur a été appelé
+2. React appelle finalement la méthode `render()` du composant `<Clock />` afin de découvrir ce qu'il faut afficher à l'écran. React 
+met ensuite à jour le DOM pour correspondre à la sortie reçue par le composant
+3. React détecte le montage du composant `<Clock />` et déclenche sa méthode de cycle de vie `componentDidMount()` créant ainsi 
+l'intervale qui toute les secondes va mettre à jour la valeur de `this.state` à l'aide de l'appel à la méthode `this.setState()`, en 
+y passant en paramètre un objet correspondant à la nouvelle date. C'est grâce à l'appel de cette méthode que React sait que l'état du 
+composant a changé, en conséquence React appelle la méthode `render()` du composant afin de déterminer ce qui devrait s'afficher à 
+l'écran avec ce nouvel état. React va faire la comparaison de la sortie retournée par le composant `<Clock />` et ce qui est 
+actuellement dans le DOM et détecter une différence. React met alors le DOM à jour en accord avec le nouveau rendu.
+4. Si le composant `<Clock />` est retiré du DOM, alors la méthode de cycle de vie `componentDidUnmount()` du composant sera appelée 
+par React pour que le minuteur soit arrêté et l'intervale supprimé. 
+
+### Utiliser l'état local correctement 
+Il y a trois choses à savoir à propos de la méthode `setState()` :
+1. Il ne faut pas modifier l'état directement `this.state.date = new Date()` n'est pas correct, à la place il faut faire 
+`this.setState({ date: new Date() })`. Le seul endroit où l'on peut affecter l'objet `this.state` c'est à l'intérieur du constructeur.
+2. Les mises à jours de l'état peuvent être asynchrones. Ce faisant, il ne faut pas se baser sur les valeurs de `this.state` et 
+`this.props` pour calculer la prochaine valeur de l'état à venir. Pour remédier à cela, il existe une deuxième version de la méthode 
+`this.setState((state, props) => { counter: state.counter + props.increment })` qui est basé sur le passage en paramètre d'une fonction 
+(qui peut être fléchée ou non) à la place d'un objet. Cette fonction possède 2 arguments : l'état précédent du composant et les props 
+au moment de la mise à jour.
+3. Les mises à jours de l'état sont fusionnées. Cela veut dire que lorsque l'on possède un état `this.state` qui contient plusieurs 
+objets, lors de l'appel à la méthode `this.setState()` nous ne sommes pas obligé d'indiquer tous les objets inclus dans l'état. Nous allons pouvoir spécifier uniquement l'objet qui varie.  
+
+Voici un exemple pour démontrer le fonctionnement expliquer autour du troisième point : 
+```
+[...]
+constructor(props) {
+  super(props);
+  this.state = {
+    posts: [],
+    comments: []
+  };
+}
+
+componentDidMount() {
+  fetchPosts().then(response => {
+    this.setState({
+      posts: response.posts
+    });
+  });
+
+  fetchComments().then(response => {
+    this.setState({
+      comments: response.comments
+    });
+  });
+}
+```
+
+La fusion n'est pas **profonde**, ce qui fait que `this.setState({comments})` laissera `this.state.posts` intacte, mais remplacera 
+complétement `this.state.comments`.
+
+### Les données descendent
+L'arborescence des composants React d'une application pourrait être vu comme une grande cascade d'eau, dont l'eau coulerait du haut vers le bas.  
+Le haut de la cascade représente les premiers composants, ceux qui englobent, le bas représent leurs descendants. 
+
+Nul parent ou enfant peut savoir si un certain composant est à état ou non, et ceci même si l'un des composants descend de l'autre. Et il ne 
+devrait pas avoir à se soucier s'il est défini par une classe ou par une fonction.  
+Rappelons qu'un élément définie par une fonction ne peut avoir état, car celui-ci ne contient pas de constructeur pour initialisé son état. 
+
+C'est pourquoi on dit souvent en React que l'état est **local** ou **encapsulé**. Il est tout-à-fait impossible d'y accéder d'un autre 
+composant. 
+
+Cependant, il est possible qu'un composant parent décide de passer à un composant enfant des informations des ses **props** ou de son **état** 
+via les **props** du composant enfant `<FormattedDate date={this.state.date}>` où ici, `this.state.date` correspond à l'état du composant 
+parent.  
+Le composant enfant va donc recevoir cette information, mais ne sera pas en capacité de savoir la nature de l'information. C'est-à-dire 
+si elle provient des **props**, de **l'état** du composant parent ou bien encore si elle a été simplement tapé à la main. 
+
+En reprennat l'idée de l'image du dessus, on appelle ça un flux de données "du haut vers le bas" ou "unidirection".  
+Un état local est toujours possédé uniquement par un composant spécifique, et toute donnée ou UI dérivée de cet état ne peut 
+affecter que les composants descendants de celui-ci.
+
+Dans une application React, le fait qu'un composant soit à l'état ou non est considéré comme un **détail d'implémentation** du 
+composant qui peut varier avec le temps.  
+Vous pouvez très bien utiliser un composant avec état, à l'intérieur d'un composant sans état, et vice-versa. 

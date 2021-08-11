@@ -65,3 +65,37 @@ ReactDOM.render(
     <App />,
     document.getElementById('app-composantsApp')
 );
+
+// Découverte des états et cycle de vie
+class Clock extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { date: new Date() }
+    }
+
+    componentDidMount() {
+        this.intervalID = setInterval(
+            () => {
+                this.setState({ date: new Date() })
+            }, 1000
+        );
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.intervalID);
+    }
+
+    render() {
+        return (
+        <div>
+            <h1>États et cycle de vie - format class cycle de vie</h1>
+            <h2>Il est {this.state.date.toLocaleTimeString()}.</h2>
+        </div>
+        )
+    }
+}
+
+ReactDOM.render(
+    <Clock />,
+    document.getElementById('app-etatsCycle')
+);
