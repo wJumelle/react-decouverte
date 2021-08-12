@@ -11,9 +11,9 @@ Version de React lors de la découverte : **v16.13.1**.
 1. [**Objectifs**](#objectifs)
 2. [**Introduction**](#introduction)
 3. Guide étape par étape : [**Introduction à JSX**](#introduction-à-jsx)
-4. Guide étape par étape : [**Le rendu des éléments**](#le-rendu-des-éléments)
-5. Guide étape par étape : [**Composants et props**](#composants-et-props)
-6. Guide étape par étape : [**État et cycle de vie**](#état-et-cycle-de-vie)
+4. Guide étape par étape : [**Le rendu des éléments**](#le-rendu-des-éléments-doc)
+5. Guide étape par étape : [**Composants et props**](#composants-et-props-doc)
+6. Guide étape par étape : [**État et cycle de vie**](#état-et-cycle-de-vie-doc)
 
 ## Objectifs
 Les objectifs à la suite de la découverte de la documentation vont être simple : 
@@ -99,6 +99,7 @@ ReactDOM.render(
 );
 ```
 
+[**☝ Retour en haut de page**](#-découverte-de-react)
 ## Introduction à JSX ([doc](https://fr.reactjs.org/docs/introducing-jsx.html))
 ```
 const element = <h1>Bonjour, monde !</h1>;
@@ -291,6 +292,7 @@ Le code ci-dessus va appeler la méthode ReactDOM.render() toutes les secondes, 
 toutes les secondes.  
 Pourtant, si l'on observe la console de notre navigateur, nous pourrons observer que seul le noeud `<h2>` est réécrit à chaque appel. 
 
+[**☝ Retour en haut de page**](#-découverte-de-react)
 ## Composants et props ([doc](https://fr.reactjs.org/docs/components-and-props.html))
 Qu'est ce qu'un composant React ? Un composant React c'est tout simple une brique de l'interface utilisateur. C'est qui va nous permettre 
 de subdiviser cette interface en élément totalement indépendants et réutilisables. Chacun de ces éléments pourra donc être considérée de 
@@ -468,6 +470,7 @@ function Comment(props) {
 Point très importants, que nous déclarions les composants à l'aide d'une fonction ou d'une classe ES6, ce dernier **ne doit jamais modifier ses propres props**.  
 **❗ Tout composant React doit agir comme une fonction pure vis-à-vis de ses props.**
 
+[**☝ Retour en haut de page**](#-découverte-de-react)
 ## État et cycle de vie ([doc](https://fr.reactjs.org/docs/state-and-lifecycle.html))
 
 ==> [**Documentation de la référence API des composants**](https://fr.reactjs.org/docs/react-component.html)
