@@ -99,3 +99,33 @@ ReactDOM.render(
     <Clock />,
     document.getElementById('app-etatsCycle')
 );
+
+// Découverte des gestionnaires d'événements React
+class Toggle extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { isToggleOn: true }
+
+        //On réalise une liaison entre la méthode et le mot-clé this
+        this.handleClick = this.handleClick.bind(this)
+    }
+
+    handleClick() {
+        this.setState(state => ({
+            isToggleOn: !state.isToggleOn
+        }))
+    }
+
+    render() {
+        return (
+            <button onClick={this.handleClick}>
+                {this.state.isToggleOn ? 'ON' : 'OFF'}
+            </button>
+        )
+    }
+}
+
+ReactDOM.render(
+    <Toggle />,
+    document.getElementById('app-eventsClass')
+)

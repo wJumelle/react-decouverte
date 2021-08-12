@@ -14,6 +14,7 @@ Version de React lors de la découverte : **v16.13.1**.
 4. Guide étape par étape : [**Le rendu des éléments**](#le-rendu-des-éléments-doc)
 5. Guide étape par étape : [**Composants et props**](#composants-et-props-doc)
 6. Guide étape par étape : [**État et cycle de vie**](#état-et-cycle-de-vie-doc)
+7. Guide étape par étape : [**Gérer les événements**](#gérer-les-événements-doc)
 
 ## Objectifs
 Les objectifs à la suite de la découverte de la documentation vont être simple : 
@@ -737,3 +738,163 @@ affecter que les composants descendants de celui-ci.
 Dans une application React, le fait qu'un composant soit à l'état ou non est considéré comme un **détail d'implémentation** du 
 composant qui peut varier avec le temps.  
 Vous pouvez très bien utiliser un composant avec état, à l'intérieur d'un composant sans état, et vice-versa. 
+
+[**☝ Retour en haut de page**](#-découverte-de-react)
+## Gérer les événements ([doc](https://fr.reactjs.org/docs/handling-events.html))
+
+La gestion des événements pour les éléments React possède une synthaxe très proche de celle pour les éléments du DOM, à quelques détails 
+près : 
+1. les événements de React sont nommés en **camelCase** plutôt qu'en minuscule
+2. En JSX on passe **une fonction** comme gestionnaire d'événement plutôt qu'une chaîne de caractère
+
+Ce qui donne : 
+```
+// HTML
+<button onclick="doSomeThg()">
+  Je réalise une action
+</button>
+
+// React
+<button onClick={doSomeThg}>
+  Je réalise aussi une action
+</button>
+```
+
+Autre élément qui à son importance, en React nous ne pouvons pas `return false` pour empêcher le comportement par défaut d'un élément HTML.  
+Pour cela Il faut explicitement appeler `preventDefault()`.
+
+```
+// HTML
+<a href="#" onclick="console.log('Le lien a été cliqué"); return false;">
+  Clic !
+</a>
+
+// React
+function ActionLink() {
+  function handleClick(e) {
+    e.prenventDefault();
+    console.log('Le lien a été cliqué');
+  }
+
+  return (
+    <a href="#" onClick={handleClick}>
+      Clic !
+    </a>
+  )
+}
+```
+
+Ici, `e` est ce que l'on appelle un [**événement synthétique**](https://fr.reactjs.org/docs/events.html). React le définit selon les normes 
+W3C afin que nous n'ayions pas à nous préoccuper de la compatibilité entre les navigateurs.  
+Les événements React ne fonctionnent pas tout à fait comme les éléments natifs, il est donc conseillé de creuser d'avantage leur fonctionnement 
+en suivant le lien vers la documentation renseignée juste avant.
+
+Lorsque l'on utilise React, nous n'aurons que très rarement besoin de l'appelle à la méthode `addEventListener`.  
+Tout simplement car nous passons l'ensemble des écouteurs lors du rendu initial de l'élément.
+
+Lorsque l'on utilise les [**classes ES6**](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Classes) afin de définir un 
+composant, il est d'usage de faire en sorte que les gestionnaires d'événements de ce composant soient des méthodes de la classe. 
+
+```
+class Toggle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { isToggleOn: true }
+
+    // On réalise une liaison entre la méthode et le mot-clé this
+    // Cette étape est obligatoire pour permettre l'utilisation de this
+    // dans la fonction de rappel
+    this.handleClick = this.handleClick.bind(this)
+  }
+
+  handleClick() {
+    this.setState(state => ({
+      isToggleOn: !state.isToggleOn
+    }))
+  }
+
+  render() {
+    return (
+      <button onClick={this.handleClick}>
+        {this.state.isToggleOn ? 'ON' : 'OFF'}
+      </button>
+    )
+  }
+}
+
+ReactDOM.render(
+  <Toggle />,
+  document.getElementById('app-eventsClass')
+)
+```
+
+En JSX il faut être prudent avec l'usage de `this` au sein des fonctions de rappel.  
+En effet, en JavaScript, nativement, les méthodes de classes ne sont pas liées par défaut.  
+Si on oublie de lier, dans le constructeur, `this.handleClick` à `this` à l'aide de la fonction [`bind()`](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Function/bind)  
+et qu'on l'utilise à l'intérieur de la fonction de rappel alors `this` sera égale à `undefined` quand la fonction sera appelée. 
+
+Comme dit plus tôt, ce comportement n'est pas propre à React, mais il provient bien d'une [**spécificité des fonctions en JavaScript**](https://www.smashingmagazine.com/2014/01/understanding-javascript-function-prototype-bind/).  
+En général, si nous faisons appelle à une méthode sans `()` alors nous serons dans l'obligation de la lier avec `bind()`. 
+
+Si nous ne voulons pas utiliser `bind()` il existe deux autres méthodes : 
+1. l'utilisation de [**la syntaxe des champs de classes**](https://babeljs.io/docs/plugins/transform-class-properties/) (expérimentale)
+2. sinon en utilisant simplement les [**fonctions fléchées**](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Functions/Arrow_functions) pour les fonctions de rappels
+
+```
+// 1 - champs de classes
+class LoggingButton extends React.Component {
+  // Cette syntaxe nous assure que `this` est bien lié dans la méthode handleClick.
+  // Attention : cette syntaxe est encore *expérimentale*.
+  handleClick = () => {
+    console.log('this vaut :', this);
+  }
+
+  render() {
+    return (
+      <button onClick={this.handleClick}>
+        Clique ici
+      </button>
+    );
+  }
+}
+
+// 2 - fonctions fléchées dans les fonctions de rappels
+class LoggingButton extends React.Component {
+  handleClick() {
+    console.log('this vaut :', this);
+  }
+
+  render() {
+    // Cette syntaxe nous assure que `this` est bien lié dans la méthode handleClick
+    return (
+      <button onClick={() => this.handleClick()}>
+        Clique ici
+      </button>
+    );
+  }
+}
+```
+
+> ❗ Cependant, il faut faire très attention avec l'usage de la troisième méthode. En effet, à chaque rendu du composant une nouvelle 
+> fonction de rappel sera créée.  
+> Dans la plus part des cas, ce n'est pas dérangeant, mais si nous passons cette fonction en props à des composants plus bas dans l'arbre 
+> ces composants risqueraient de forcer des ré-affichages superflus du composant.  
+> Il est donc déconseillé d'utiliser cette troisième méthode. 
+
+### Passer des arguments à un gestionnaire d'événements
+
+Au sein d'une boucle, qui itérerait par exemple jusqu'à créer toutes les lignes d'un tableau, il est courant de vouloir passer un 
+argument supplémentaire à un gestionnaire d'événement.  
+Par exemple, si `id` ici représente l'ID de la ligne du tableau en question, nous pourrions imaginer d'écrire le composant de ces 
+deux manières différentes : 
+
+```
+// 1 - Avec la fonction fléchée
+<button onClick={(e) => this.deleteRow(id, e)}></button>
+
+// 2 - Avec la méthode bind()
+<button onClick={this.deleteRow.bind(this, id)}></button>
+```
+
+Les lignes précédentes sont équivalentes et utilisent respectivement les **fonctions fléchées** et **Function.Prototype.bind**.  
+Dans les deux cas, l’argument e represente l’événement React qui sera passé en second argument après l’ID. Avec une fonction fléchée, nous devons passer l’argument explicitement, alors qu’avec bind tous les arguments sont automatiquement transmis.
