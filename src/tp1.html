@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP1 pour faire le point avec les 5 premiers chapitres</title>
+    <style>
+        body>div {
+            padding-block: 2rem;
+        }
+        body>div:nth-child(odd) {
+            background: #e8e8e8;
+        }
+    </style>
+</head>
+<body>
+    <h1>Application des 5 premiers chapitres</h1>
+    <ol>
+        <li>Introduction à JSX</li>
+        <li>Le rendu des éléments</li>
+        <li>Composants et props</li>
+        <li>État et cycle de vie</li>
+        <li>Gérer les événements</li>
+    </ol>
+    <!-- Charge React -->
+    <!-- Remarque : pour le déploiement, remplacez "development.js" par "production.min.js" -->
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+
+    <!-- Babel pour JSX -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <script src="./js/tp1.js" type="text/babel"></script>
+</body>
+</html>

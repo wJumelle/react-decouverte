@@ -141,7 +141,7 @@ Ainsi nous pourrions imaginer un travail de formatage autour du nom complet en u
 fonction.
 
 Lorsque le JSX devient complexe à lire, il est important de ne pas hésiter à le **découper en plusieurs lignes**. Cela augmente la lisibilité du 
-code sans pour autant le cassé. Il est recommandé d'encadrer le JSX multilignes par des parenthèses, afin d'éviter l'insertion de ; automatique.
+code sans pour autant le casser. Il est recommandé d'encadrer le JSX multilignes par des parenthèses, afin d'éviter l'insertion de ; automatique.
 
 ```
 function formatName(u) {
@@ -246,10 +246,10 @@ C'est à l'intérieur de ce noeud DOM "racine" que tout sera généré par **Rea
 
 Pour effectuer le rendu d'un élément React à l'intérieur d'un noeud DOM "racine", rien de plus simple : il suffit d'utiliser la méthode suivante. 
 ```
-HTML
+//HTML
 <div id="app"></div>
 
-JS
+//JS
 const elem = <h1>Un super titre pour bien commencer mon application</h1>
 ReactDOM.render(elem, document.getElementById('app'));
 ```
@@ -295,7 +295,7 @@ Pourtant, si l'on observe la console de notre navigateur, nous pourrons observer
 
 [**☝ Retour en haut de page**](#-découverte-de-react)
 ## Composants et props ([doc](https://fr.reactjs.org/docs/components-and-props.html))
-Qu'est ce qu'un composant React ? Un composant React c'est tout simple une brique de l'interface utilisateur. C'est qui va nous permettre 
+Qu'est ce qu'un composant React ? Un composant React c'est tout simple une brique de l'interface utilisateur. C'est ce qui va nous permettre 
 de subdiviser cette interface en élément totalement indépendants et réutilisables. Chacun de ces éléments pourra donc être considérée de 
 manière isolée. 
 
@@ -330,7 +330,7 @@ class Welcome extends React.Component {
 Ces deux composants sont **équivalents du point de vue de React**, nous obtiendrons au final le même élément React.
 
 ### Produire le rendu d'un composant
-Jusqu'ici nous nous sommes servi de la méthode ReactDOM.render() uniquement pour affichage des éléments React représentant des balises du DOM. 
+Jusqu'ici nous nous sommes servi de la méthode ReactDOM.render() uniquement pour l'affichage des éléments React représentant des balises du DOM. 
 ReactDOM.render() peut aussi afficher des éléments React représentant des composants définis par l'utilisateur.  
 Lorsque React va rencontrer un élément React de type composant, il va **transmettre les attributs JSX et les enfants à ce composant** sous la 
 forme d'un objet unique : **props**.
@@ -604,7 +604,7 @@ function tick() {
 setInterval(tick, 1000);
 ```
 
-> ❗ Les constructeurs de classe doivent toujours passer props en paramètres. 
+> ❗ Les constructeurs de classe doivent toujours passer props en paramètres.  
 > ❗ A l'intérieur de ces mêmes constructeurs nous devons toujours appeler le constructeur parent de notre classe en y passant 
 > les props en paramètres. Pour cela nous utilisons le mot-clé `super(props)` ([**doc MDN**](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Operators/super)).
 
@@ -731,7 +731,7 @@ parent.
 Le composant enfant va donc recevoir cette information, mais ne sera pas en capacité de savoir la nature de l'information. C'est-à-dire 
 si elle provient des **props**, de **l'état** du composant parent ou bien encore si elle a été simplement tapé à la main. 
 
-En reprennat l'idée de l'image du dessus, on appelle ça un flux de données "du haut vers le bas" ou "unidirection".  
+On appelle ça un flux de données "du haut vers le bas" ou "unidirectionnel".  
 Un état local est toujours possédé uniquement par un composant spécifique, et toute donnée ou UI dérivée de cet état ne peut 
 affecter que les composants descendants de celui-ci.
 
@@ -897,4 +897,4 @@ deux manières différentes :
 ```
 
 Les lignes précédentes sont équivalentes et utilisent respectivement les **fonctions fléchées** et **Function.Prototype.bind**.  
-Dans les deux cas, l’argument e represente l’événement React qui sera passé en second argument après l’ID. Avec une fonction fléchée, nous devons passer l’argument explicitement, alors qu’avec bind tous les arguments sont automatiquement transmis.
+Dans les deux cas, l’argument `e` represente l’événement React qui sera passé en second argument après l’ID. Avec une fonction fléchée, nous devons passer l’argument explicitement, alors qu’avec bind tous les arguments sont automatiquement transmis.
