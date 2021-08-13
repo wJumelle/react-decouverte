@@ -3,7 +3,7 @@
 class ToDoList extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { list: [], inputValue: "" };
+        this.state = { list: ["Toto", "Titi", "Tata"], inputValue: "" };
 
         this.addItemToList = this.addItemToList.bind(this);
     }
@@ -20,7 +20,9 @@ class ToDoList extends React.Component {
         return (
             <div>
                 <ul>
-                    <li>Mon premier élément de liste</li>
+                    {this.state.list.forEach((e) => {
+                        <li>e</li>
+                    })}
                 </ul>
                 <input id="newItem" type="text" value="" onChange={this.updatedValue} />
                 <button onClick={this.addItemToList}>Ajouter l'élément à la liste</button>
