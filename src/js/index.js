@@ -129,3 +129,142 @@ ReactDOM.render(
     <Toggle />,
     document.getElementById('app-eventsClass')
 )
+
+// Découverte de l'affichage conditionnel
+function SalutLabo(props) {
+    return (
+        <h2>Salut très cher abonné</h2>
+    )
+}
+
+function SalutLunknow(props) {
+    return (
+        <h2>Salut abonne-toi, merci !</h2>
+    )
+}
+
+function MessageDeBienvenue(props) {
+    const isLoggedIn = props.isLoggedIn; 
+
+    if(isLoggedIn) {
+        return (
+            <SalutLabo />
+        )
+    } else {
+        return (
+            <SalutLunknow />
+        )
+    }
+}
+
+ReactDOM.render(
+    <MessageDeBienvenue isLoggedIn={true} />,
+    document.getElementById('app-affichageConditionnel')
+);
+
+// Approfondissement de l'affichage conditionnel - récupération des éléments dans des variables
+// On reprends les deux composants SalutLabo / SalutLunknow du dessus
+function LoginButton(props) {
+    return (
+        <button onClick={props.onClick}>
+            Connexion
+        </button>
+    )
+}
+
+function LogoutButton(props) {
+    return (
+        <button onClick={props.onClick}>
+            Déconnexion
+        </button>
+    )
+}
+
+class LoginControl extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { isLoggedIn: false }
+        this.handleLoginClick = this.handleLoginClick.bind(this);
+        this.handleLogoutClick = this.handleLogoutClick.bind(this);
+    }
+
+    handleLoginClick() {
+        this.setState({ isLoggedIn: true });
+    }
+
+    handleLogoutClick() {
+        this.setState({ isLoggedIn: false });
+    }
+
+    render () {
+        const isLoggedIn = this.state.isLoggedIn;
+        let button;
+
+        if(isLoggedIn) {
+            button = <LogoutButton onClick={this.handleLogoutClick} />
+        } else {
+            button = <LoginButton onClick={this.handleLoginClick} />
+        }
+
+        return (
+            <div>
+                <MessageDeBienvenue isLoggedIn={isLoggedIn} />
+                {button}
+            </div>
+        )
+    }
+}
+
+ReactDOM.render(
+    <LoginControl />, 
+    document.getElementById("app-affichageConditionnel2")
+)
+
+// Affichage conditionnel - Masquer avec la valeur null !
+function ChantalLauby(props) {
+    const isVisible = props.isVisible;
+    if(!isVisible) {
+        return null;
+    }
+
+    return (
+        <div style={{position: "relative", paddingBottom: "calc(57.50% + 44px)"}}>
+            <iframe src='https://gfycat.com/ifr/FixedIllegalCod' frameBorder='0' scrolling='no' width='100%' height='100%' style={{position: "absolute", top: 0, left: 0}} allowFullScreen></iframe>
+        </div>
+    );
+}
+
+function ButtonSwitchChantalLauby(props) {
+    const isVisible = props.isVisible;
+
+    return (
+        <button onClick={props.onClick}>{isVisible ? "On m'voit plus" : "On m'voit"}</button>
+    )
+}
+
+class OnmvoitOnmvoitplus extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {visible: this.props.isVisible};
+        this.handleSwitchChantalLaubyClick = this.handleSwitchChantalLaubyClick.bind(this);
+    }
+
+    handleSwitchChantalLaubyClick() {
+        this.setState(state => ({visible: !state.visible}));
+    }
+
+    render() {
+        return (
+            <div>
+                <h2>Mesdames et Messieurs, Chantal Lauby 🎉</h2>
+                <ButtonSwitchChantalLauby isVisible={this.state.visible} onClick={this.handleSwitchChantalLaubyClick} />
+                <ChantalLauby isVisible={this.state.visible} />
+            </div>
+        )
+    }
+}
+
+ReactDOM.render(
+    <OnmvoitOnmvoitplus isVisible={false} />,
+    document.getElementById('app-chantalLauby')
+);

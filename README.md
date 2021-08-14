@@ -15,6 +15,7 @@ Version de React lors de la découverte : **v16.13.1**.
 5. Guide étape par étape : [**Composants et props**](#composants-et-props-doc)
 6. Guide étape par étape : [**État et cycle de vie**](#état-et-cycle-de-vie-doc)
 7. Guide étape par étape : [**Gérer les événements**](#gérer-les-événements-doc)
+8. Guide étape par étape : [**Affichage conditionnel**](#affichage-conditionnel)
 
 ## Objectifs
 Les objectifs à la suite de la découverte de la documentation vont être simple : 
@@ -898,3 +899,6 @@ deux manières différentes :
 
 Les lignes précédentes sont équivalentes et utilisent respectivement les **fonctions fléchées** et **Function.Prototype.bind**.  
 Dans les deux cas, l’argument `e` represente l’événement React qui sera passé en second argument après l’ID. Avec une fonction fléchée, nous devons passer l’argument explicitement, alors qu’avec bind tous les arguments sont automatiquement transmis.
+
+[**☝ Retour en haut de page**](#-découverte-de-react)
+## Affichage conditionnel

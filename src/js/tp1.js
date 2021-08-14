@@ -10,7 +10,7 @@ class ToDoList extends React.Component {
     }
 
     addItemToList() {
-        this.setState((state) => ({ list.push(state.inputValue) }) );
+        //this.setState((state) => ({ list.push(state.inputValue) }) );
     }
 
     updatedValue(e) {
