@@ -902,3 +902,207 @@ Dans les deux cas, l’argument `e` represente l’événement React qui sera pa
 
 [**☝ Retour en haut de page**](#-découverte-de-react)
 ## Affichage conditionnel
+L'une des plus grandes forces de React est la facilité à fragmenter notre code en petites briques totalement indépendantes.  
+La conception de ces composants distincts, qui englobent leur propre logique et leur rendu, permet nottamment la facilitation de la gestion 
+d'un affichage conditionnel, suivant l'état de notre application. 
+
+L'affichage condtionnel en React fonctionne exactement pareil que les conditons `if` en JavaScript. 
+En React on peut utiliser `if` ou `l'opérateur ternaire` pour créer des éléments représentant l'état courant.  
+React ensuite n'aura plus qu'à mettre à jours l'UI pour qu'elle corresponde. 
+
+Considérons le code suivant : nous pouvons observer la présence de deux premiers composants `<SalutLabo />` et `<SalutLunknow />` 
+dont le but est de créer un élément React représentant un message de bienvenue.  
+Ensuite, nous avons crée un composant `<MessageDeBienvenue />` dont le but est d'observer la valeur de sa props `isLoggedIn` et d'en 
+déterminer le composant à afficher. 
+
+```
+function SalutLabo(props) {
+    return (
+        <h2>Salut très cher abonné</h2>
+    )
+}
+
+function SalutLunknow(props) {
+    return (
+        <h2>Salut abonne-toi, merci !</h2>
+    )
+}
+
+function MessageDeBienvenue(props) {
+    const isLoggedIn = props.isLoggedIn; 
+
+    if(isLoggedIn) {
+        return (
+            <SalutLabo />
+        )
+    } else {
+        return (
+            <SalutLunknow />
+        )
+    }
+    // return (
+    //     <div>{isLoggedIn ? <SalutLabo /> : <SalutLunknow />}</div>
+    // )
+}
+
+ReactDOM.render(
+    <MessageDeBienvenue isLoggedIn={true} />,
+    document.getElementById('app-affichageConditionnel')
+);
+```
+
+### Variables d'éléments
+En React il est tout à fait possible de stocker des éléments React dans des variables. Quel peut en être l'utilité ?  
+Tout simplement de faciliter la lecture, mais aussi la gestion de l'affichage conditionnel.  
+Ainsi, en fonction d'une condition, on pourra stocker à l'intérieur de la variable `maVar` un composant ou un autre, pour finalement 
+lors de l'appel de la méthode `render()` du composant englobant n'avoir qu'à insérier la variable à l'intérieur d'une expression `{maVar}`.
+
+Considérons le code qui suit : tout d'abord nous avons créé deux fonctions composants `<LoginButton />` et `<LogoutButton />`.  
+Chacun permet de créer un élément React représentant soit un bouton de connexion, soit de déconnexion.
+```
+function LoginButton(props) {
+    return (
+        <button onClick={props.onClick}>
+            Connexion
+        </button>
+    )
+}
+
+function LogoutButton(props) {
+    return (
+        <button onClick={props.onClick}>
+            Déconnexion
+        </button>
+    )
+}
+```
+
+Ensuite, nous avons mis en place le composant à état `<LoginControl />`. Celui-ci contient l'état de connexion ainsi que les deux 
+méthodes permettant de switcher entre les deux états.  
+A l'intérieur de sa méthode de `render()` nous vérifions la valeur de l'état `isLoggedIn` afin de choisir quel composant charger et 
+de lui associer la bonne méthode. Nous stockons cet élément dans la variable `button` que nous retournons sous la forme `{button}`.
+```
+class LoginControl extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { isLoggedIn: false }
+        this.handleLoginClick = this.handleLoginClick.bind(this);
+        this.handleLogoutClick = this.handleLogoutClick.bind(this);
+    }
+
+    handleLoginClick() {
+        this.setState({ isLoggedIn: true });
+    }
+
+    handleLogoutClick() {
+        this.setState({ isLoggedIn: false });
+    }
+
+    render () {
+        const isLoggedIn = this.state.isLoggedIn;
+        let button;
+
+        if(isLoggedIn) {
+            button = <LogoutButton onClick={this.handleLogoutClick} />
+        } else {
+            button = <LoginButton onClick={this.handleLoginClick} />
+        }
+
+        return (
+            <div>
+                <MessageDeBienvenue isLoggedIn={isLoggedIn} />
+                {button}
+            </div>
+        )
+    }
+}
+
+ReactDOM.render(
+    <LoginControl />, 
+    document.getElementById("app-affichageConditionnel2")
+)
+```
+
+Il existe d'autres façons, plus concise, de réaliser un affichag conditionnel. Cependant, celles-ci perdent légèrement en lisibilité de code. 
+
+### Condtion à la volée avec l'opérateur logique &&
+L'une des forces du JSX est, comme nous l'avons déjà dit, la capacité à pouvoir gérer toutes sortes d'expresion JavaScript à l'aide des 
+accolades.
+
+Une expression en particulier va nous intéresser pour le thème de ce sous-chapitre : les expresions utilisant l'opérateur `&&`.  
+En JavaScript `true && expression` sera toujours évalué à `expression`, alors que `false && expression` sera évalué à `false`.  
+Jusqu'ici rien d'anormal, mais si nous projettons ce concept dans l'écriture de notre JSX, nous pourrions obtenir ce genre de résultat : 
+
+Ici, comme `unreadMessages.length` vaut 3, alors `unreadMessages.length > 0` vaut `true` et donc notre test étant évalué à `true` on 
+affiche ce qu'il y a après le `&&`.
+```
+function Mailbox(props) {
+  const unreadMessages = props.unreadMessages;
+  return (
+    <div>
+      <h1>Bonjour !</h1>
+      {unreadMessages.length > 0 &&
+        <h2>
+          Vous avez {unreadMessages.length} message(s) non-lu(s).
+        </h2>
+      }
+    </div>
+  );
+}
+
+const messages = ['React', 'Re: React', 'Re:Re: React'];
+ReactDOM.render(
+  <Mailbox unreadMessages={messages} />,
+  document.getElementById('root')
+);
+```
+
+### Alternative à la volée avec opérateur ternaire
+Une autre méthode pour l'affichage conditionnel à la volée d'élément est l'utilisation de l'opérateur ternaire JavaScript.  
+Cet opérateur ternaire peut se retrouver dans une forme très concise (en une seule ligne) ou plus lourde (en plusieurs lignes).
+
+```
+// Version concise
+return (
+  <div>
+    L’utilisateur <b>{isLoggedIn ? 'est actuellement' : 'n’est pas'}</b> connecté.
+  </div>
+);
+
+// Version lourde
+return (
+  <div>
+    {isLoggedIn
+      ? <LogoutButton onClick={this.handleLogoutClick} />
+      : <LoginButton onClick={this.handleLoginClick} />
+    }
+  </div>
+);
+```
+
+Il est important de se rendre compte que toutes ces méthodes arrivent à une même finalité, le choix de la méthode dépendra donc 
+des préférences de lisibilité en vigueur pour nous et notre équipe.  
+Il est aussi important de garder à l'esprit que dès que vous avez l'impression que votre code devient trop complexe, c'est potentiellement 
+qu'il faut fragmenter vos composants en extrayant certains.
+
+### Empêcher l'affichage d'un composant
+C'est assez rare, mais parfois vous allez voir masquer un élément quand bien même celui-ci figure dans le rendu d'un autre composant. 
+Cela est possible dans React à l'aide du mot-clé `null`.  
+En effet, tout composant retournant la valeur `null`, au lieu de son affichage habituel, ne sera pas affiché.  
+
+```
+function WarningBanner(props) {
+  if (!props.warn) {
+    return null;
+  }
+
+  return (
+    <div className="warning">
+      Attention !
+    </div>
+  );
+}
+```
+
+> ❗ Renvoyer la valeur `null` à l'intérieur de la méthode `render()` d'un composant n'affectera pas les appels aux méthodes de cycle 
+> de vie du composant (`componentDidUpdate`, `componentDidMount`, `componentWillUnmount` etc.).

@@ -155,6 +155,9 @@ function MessageDeBienvenue(props) {
             <SalutLunknow />
         )
     }
+    // return (
+    //     <div>{isLoggedIn ? <SalutLabo /> : <SalutLunknow />}</div>
+    // )
 }
 
 ReactDOM.render(
