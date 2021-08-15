@@ -16,6 +16,7 @@ Version de React lors de la découverte : **v16.13.1**.
 6. Guide étape par étape : [**État et cycle de vie**](#état-et-cycle-de-vie-doc)
 7. Guide étape par étape : [**Gérer les événements**](#gérer-les-événements-doc)
 8. Guide étape par étape : [**Affichage conditionnel**](#affichage-conditionnel)
+9. Guide étape par étape : [**Listes et clés**](#listes-et-clés)
 
 ## Objectifs
 Les objectifs à la suite de la découverte de la documentation vont être simple : 
@@ -1106,3 +1107,67 @@ function WarningBanner(props) {
 
 > ❗ Renvoyer la valeur `null` à l'intérieur de la méthode `render()` d'un composant n'affectera pas les appels aux méthodes de cycle 
 > de vie du composant (`componentDidUpdate`, `componentDidMount`, `componentWillUnmount` etc.).
+
+[**☝ Retour en haut de page**](#-découverte-de-react)
+## Listes et clés
+En JavaScript il existe une méthode magique : `map()`.  
+Cette dernière prends en entrée un tableau et retourne en sortie un tableau qui a été travaillé par une fonction.  
+En React, transformer un tableau en une liste d'élément est quasi identique. 
+
+### Afficher plusieurs composants
+En React, il est possible de construire une **collection d'élément** et des les inclure par la suite dans du JSX à l'aide des `{}`.
+Pour cela, il suffit d'utiliser la méthode `map()` de JavaScript afin d'initialiser une variable qui contiendra notre collection d'élément. 
+
+```
+const numbers = [1, 2, 3, 4, 5]; 
+const listNumber = numbers.map( (number) => <li>{numbers}</li> );
+
+ReactDOM.render(
+  <ul>{listNumber}</ul>,
+  document.getElementById('app-introMap')
+)
+```
+
+### Composant basique de liste
+En général, ce que l'on cherche à faire, c'est internaliser à l'intérieur d'un composant l'affichage / la gestion de notre liste.  
+On va donc transformer l'exemple précédent afin que le fonctionnement se fasse à l'aide d'un composant, qui acceptera en entrée un tableau de nombre 
+en attribut JSX et produira la liste en sortie. 
+
+```
+function NumberList(props) {
+    const numbers = props.numbers; 
+    const listItems = numbers.map( (number) => <li key={number.toString()}>{number}</li> );
+
+    return (
+        <ul className="NumberList">{listItems}</ul>
+    )
+}
+
+const numbers = [1, 2, 3, 4, 5]; 
+
+ReactDOM.render(
+  <NumberList numbers={numbers} />,
+  document.getElementById('app-introMap')
+)
+```
+
+> ❗ `key` est un attribut spécial en JSX que l'on doit forcément inclure lorsque créé une liste d'éléments.  
+> En effet, l'une des choses importante à savoir lorsque l'on manipule les listes d'éléments en React, c'est que React à besoin d'un 
+> identifiant (la `key`), pour chacun des éléments, afin de tout simplement cibler l'élément à mettre jours si une évolution est constatée.  
+
+Si l'on ne spécifie pas l'attribut `key` pour chacun des éléments de notre liste, alors React émettra une erreur dans la console. 
+
+### Les clés
+Les clés aident React à identifier quels éléments d'une liste ont changé, ont été ajoutés ou supprimés. On doit donc ajouter une clé 
+à chaque élément d'un tableau afin de leur apporter une identité stable. 
+
+> 💡 Le meilleur moyen de choisir une clé est d'utiliser quelque chose qui identifie de façon unique un élément d'une liste parmi ses voisins. 
+> En effet, le caractère unique d'une `key` n'a d'importance qu'uniquement dans le contexte de la liste qui contient l'élément identifié par la `key`.
+
+> ❗ Quand un ID stable n'est pas facilement trouvable pour les éléments à afficher, alors nous pouvons utiliser l'index de l'élément, en 
+> dernier recours.  
+> Il n'est pas recommandé d'utiliser l'index comme clé si l'ordre des éléments viendrait à évoluer. Cela pourrait avoir un effet négatif 
+> sur les performances et causer des problèmes avec l'état du composants. 
+
+==> Lien vers un article [**autour de l'explication en profondeur de l'impact négatif de l'utilisation de l'index comme clé**](https://medium.com/@robinpokorny/index-as-a-key-is-an-anti-pattern-e0349aece318).
+
