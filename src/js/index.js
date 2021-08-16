@@ -273,12 +273,22 @@ ReactDOM.render(
 );
 
 // Découverte des listes et clés
+function ListItem(props) {
+    return (
+        <li className="extractedListItem">{props.value}</li>
+    );
+}
+
 function NumberList(props) {
     const numbers = props.numbers; 
-    const listItems = numbers.map( (number) => <li>{number}</li> );
+    const listItems = numbers.map( (number) =>
+        <ListItem key={number.toString()} value={number} />
+    );
 
     return (
-        <ul className="NumberList">{listItems}</ul>
+        <ul className="NumberListExtractComponent">
+            {listItems}
+        </ul>
     )
 }
 

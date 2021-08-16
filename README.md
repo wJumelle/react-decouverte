@@ -1171,3 +1171,72 @@ Les clés aident React à identifier quels éléments d'une liste ont changé, o
 
 ==> Lien vers un article [**autour de l'explication en profondeur de l'impact négatif de l'utilisation de l'index comme clé**](https://medium.com/@robinpokorny/index-as-a-key-is-an-anti-pattern-e0349aece318).
 
+### Extraire des composants avec des clés
+
+Les clés n'ont une signification que dans le contexte du tableau qui les entoure. 
+Ainsi, lorsque l'on extrait des composants qui possèdent des clés il faut veiller à bien garder l'information `key` sur le composant en lui-même 
+et non sur l'élément `<li>`. 
+
+En reprennant l'exemple ci-dessus mais en extrayant l'élément `<li>` dans un nouveau composant `<ListItem />` nous obtiendrons donc 
+```
+function ListItem(props) {
+  return (
+      <li className="extractedListItem">{props.value}</li>
+  );
+}
+
+function NumberList(props) {
+  const numbers = props.numbers; 
+  const listItems = numbers.map( (number) =>
+    <ListItem key={number.toString()} value={number} />
+  );
+
+  return (
+    <ul className="NumberListExtractComponent">
+      {listItems}
+    </ul>
+  )
+}
+
+const numbers = [1, 2, 3, 4, 5]; 
+
+ReactDOM.render(
+  <NumberList numbers={numbers} />,
+  document.getElementById('app-introMap')
+)
+```
+
+Il faut bien garder en tête que chaque élément à l'intérieur d'un appel à `map()` à besoin d'une clé.
+
+### Les clés n'ont besoin d'être uniques qu'au sein de la liste
+La portée des clés étant le tableau qui l'entoure alors celles-ci n'ont besoin d'être uniques que parmi leurs voisins, elles n'ont 
+pas besoin de l'être globalement.  
+
+Les clés servent d'indicateur à React, mais elles ne sont pas passé à l'intérieur des `props` de celui-ci. Ainsi, si vous souhaitez 
+accéder à cette information il faudra la passer dans une prop avec un nom différent. 
+
+```
+const listItems = numbers.map( (number) =>
+  <ListItem key={number.toString()} id={number.toString()} value={number} />
+);
+```
+
+### Intégrer map() dans du JSX
+JSX permettant d'intégrer des expressions quelconques à l'aide des `{}` nous pouvons donc facilement intégrer la méthode `map()` 
+à notre JSX. 
+Encore une fois, cela dépendra de vos habitudes de codages avec votre équipe car l'inclusion de la méthode `map()` à l'intérieur du 
+JSX peut rapidement complexifié la lecture du rendu attendu par votre composant.  
+
+```
+function NumberList(props) {
+  const numbers = props.numbers;
+  return (
+    <ul>
+      {numbers.map((number) =>
+        <ListItem key={number.toString()}
+                  value={number} />
+      )}
+    </ul>
+  );
+}
+```
