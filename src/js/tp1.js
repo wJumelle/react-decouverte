@@ -10,24 +10,22 @@ class ToDoList extends React.Component {
     }
 
     addItemToList() {
-        //this.setState((state) => ({ list.push(state.inputValue) }) );
+        this.setState((state) => ({ list: [...state.list, state.inputValue] }));
     }
 
     updatedValue(e) {
-        const tempValue = e.target.value;
-        this.setState((state) => ({inputValue: state.inputValue + tempValue }));
-        console.log(this.state);
+        this.setState({inputValue: e.target.value});
     }
 
     render() {
-        const listItems = this.state.list.map((todo, id) => <li key={id}>{todo}</li>);
+        const listItems = this.state.list.map((todo) => <li key={todo.toString()}>{todo}</li>);
 
         return (
             <div>
                 <ul>
                     {listItems}
                 </ul>
-                <input id="newItem" type="text" value="" onChange={this.updatedValue} />
+                <input id="newItem" type="text" value={this.state.value} onChange={this.updatedValue} />
                 <button onClick={this.addItemToList}>Ajouter l'élément à la liste</button>
             </div>
         )

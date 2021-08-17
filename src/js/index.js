@@ -298,3 +298,82 @@ ReactDOM.render(
   <NumberList numbers={numbers} />,
   document.getElementById('app-introMap')
 )
+
+// Découverte des formulaire React
+class FormulaireReact extends React.Component {
+    constructor(props){
+        super(props); 
+        this.state = {
+            nom: 'Toto',
+            prenom: '',
+            message: 'Écrivez nous votre message ici',
+            pokemonList: 'salameche',
+            pokemonListLabel: 'Salamèche',
+            compliance: true
+        };
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleChange(event) {
+        if(event.target.name === 'pokemonList') {
+            let index = event.nativeEvent.target.selectedIndex;
+            let label = event.nativeEvent.target[index].text;
+            this.setState({ [event.target.name]: event.target.value });
+            this.setState({ pokemonListLabel: label });
+        } else if (event.target.type === 'checkbox') {
+            this.setState({ [event.target.name]: event.target.checked })
+        } else {
+            this.setState({ [event.target.name]: event.target.value })
+        }
+    }
+
+    handleSubmit(event) {
+        console.log(this.state);
+        event.preventDefault();
+    }
+
+    render() {
+        return (
+            <form onSubmit={this.handleSubmit}>
+                <label htmlFor="nom">
+                    Votre nom :
+                    <input type="text" id="nom" name="nom" value={this.state.nom} onChange={this.handleChange} />
+                </label>
+                <p>Votre nom est : <strong>{this.state.nom}</strong></p>
+                <label htmlFor="prenom">
+                    Votre prénom :
+                    <input type="text" id="prenom" name="prenom" value={this.state.prenom} onChange={this.handleChange} />
+                </label>
+                <p>Votre prénom est : <strong>{this.state.prenom}</strong></p>
+                <label htmlFor="message">
+                    Votre message :
+                    <textarea id="message" name="message" value={this.state.message} onChange={this.handleChange} />
+                </label>
+                <p>Le message que vous voulez nous faire passer est le suivant :</p>
+                <p>
+                    <strong>{this.state.message}</strong>
+                </p>
+                <label htmlFor="pokemonList">
+                    Choisissez votre starter :
+                    <select id="pokemonList" name="pokemonList" value={this.state.pokemonList} onChange={this.handleChange}>
+                        <option value="pikachu">Pikachu</option>
+                        <option value="salameche">Salamèche</option>
+                        <option value="bulbizarre">Bulbizarre</option>
+                        <option value="carapuce">Carapuce</option>
+                    </select>
+                </label>
+                <p>Vous avez choisi le starter suivant : <strong>{this.state.pokemonListLabel}</strong></p>
+                <label htmlFor="compliance">
+                    <input type="checkbox" id="compliance" name="compliance" checked={this.state.compliance} onChange={this.handleChange} />
+                </label>
+                <p>La case est chochée ? : <strong>{(this.state.compliance) ? 'Vrai' : 'Faux'}</strong></p>
+            </form>
+        );
+    }
+}
+
+ReactDOM.render(
+    <FormulaireReact />,
+    document.getElementById('app-formulaire')
+)
