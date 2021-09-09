@@ -10,14 +10,15 @@ Version de React lors de la découverte : **v16.13.1**.
 ## Sommaire
 1. [**Objectifs**](#objectifs)
 2. [**Introduction**](#introduction)
-3. Guide étape par étape : [**Introduction à JSX**](#introduction-à-jsx)
+3. Guide étape par étape : [**Introduction à JSX**](#introduction-à-jsx-doc)
 4. Guide étape par étape : [**Le rendu des éléments**](#le-rendu-des-éléments-doc)
 5. Guide étape par étape : [**Composants et props**](#composants-et-props-doc)
 6. Guide étape par étape : [**État et cycle de vie**](#état-et-cycle-de-vie-doc)
 7. Guide étape par étape : [**Gérer les événements**](#gérer-les-événements-doc)
-8. Guide étape par étape : [**Affichage conditionnel**](#affichage-conditionnel)
-9. Guide étape par étape : [**Listes et clés**](#listes-et-clés)
-10. Guide étape par étape : [**Formulaires**](#formulaires)
+8. Guide étape par étape : [**Affichage conditionnel**](#affichage-conditionnel-doc)
+9. Guide étape par étape : [**Listes et clés**](#listes-et-clés-doc)
+10. Guide étape par étape : [**Formulaires**](#formulaires-doc)
+11. Guide étape par étape : [**Faire remonter l'état**](#faire-remonter-létat-doc)
 
 ## Objectifs
 Les objectifs à la suite de la découverte de la documentation vont être simple : 
@@ -903,7 +904,7 @@ Les lignes précédentes sont équivalentes et utilisent respectivement les **fo
 Dans les deux cas, l’argument `e` represente l’événement React qui sera passé en second argument après l’ID. Avec une fonction fléchée, nous devons passer l’argument explicitement, alors qu’avec bind tous les arguments sont automatiquement transmis.
 
 [**☝ Retour en haut de page**](#-découverte-de-react)
-## Affichage conditionnel
+## Affichage conditionnel ([doc](https://fr.reactjs.org/docs/conditional-rendering.html))
 L'une des plus grandes forces de React est la facilité à fragmenter notre code en petites briques totalement indépendantes.  
 La conception de ces composants distincts, qui englobent leur propre logique et leur rendu, permet nottamment la facilitation de la gestion 
 d'un affichage conditionnel, suivant l'état de notre application. 
@@ -1110,7 +1111,7 @@ function WarningBanner(props) {
 > de vie du composant (`componentDidUpdate`, `componentDidMount`, `componentWillUnmount` etc.).
 
 [**☝ Retour en haut de page**](#-découverte-de-react)
-## Listes et clés
+## Listes et clés ([doc](https://fr.reactjs.org/docs/lists-and-keys.html))
 En JavaScript il existe une méthode magique : `map()`.  
 Cette dernière prends en entrée un tableau et retourne en sortie un tableau qui a été travaillé par une fonction.  
 En React, transformer un tableau en une liste d'élément est quasi identique. 
@@ -1242,7 +1243,7 @@ function NumberList(props) {
 ```
 
 [**☝ Retour en haut de page**](#-découverte-de-react)
-## Formulaires
+## Formulaires ([doc](https://fr.reactjs.org/docs/forms.html))
 Les formulaires en React fonctionne différement que les autres éléments React.  
 En effet, chaque élément de formulaire HTML possèdent déjà un état interne. Par exemple, un champ `<input type="text" name="nom" />` 
 possède un état interne qui est sa valeur, transmise par `value`.
@@ -1497,3 +1498,250 @@ Pour ce genre de cas de figures, React met à disposition les [**composants non-
 ### Solution clé en main
 Il existe des solutions répondant à tout vos besoins (validation des données, gestion de l'historique des champs visités, gestion de la 
 soumission du formulaire etc.) : [**Formik**](https://jaredpalmer.com/formik) est l'une d'elle et fait parti des choix les plus populaires.
+
+[**☝ Retour en haut de page**](#-découverte-de-react)
+## Faire remonter l'état ([doc](https://fr.reactjs.org/docs/lifting-state-up.html))
+
+Il arrive de manière assez régulière lorsque l'on manipule React que l'on puisse vouloir partager des données dynamiques entre différents composants.  
+Dans ce cas bien précis, il est alors recommandé de faire remonter les états partagés au composant parent le plus proche.  
+
+Pour illustrer cela nous allons mettre en place un calculateur permettant de prendre en entrée une température et d'afficher en sortie 
+si cette température est suffisament élevée pour l'ébulition de l'eau. 
+Ainsi, nous créons les deux composants suivants `<BoilingVerdict />` et `<Calculator />`. 
+
+```
+function BoilingVerdict(props) {
+    if(props.celsius >= 100) {
+        return <p>L'eau bout</p>
+    }
+
+    return <p>L'eau ne bout pas.</p>
+}
+
+class Calculator extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+        this.state = { temperature: '' }
+    }
+
+    handleChange(e) {
+        this.setState({ temperature: e.target.value });
+    }
+
+    render() {
+        const temperature = this.state.temperature;
+        return (
+            <fieldset>
+                <legend>Saisissez la température en Celsius :</legend>
+                <input value={temperature} onChange={this.handleChange} />
+                <BoilingVerdict celsius={parseFloat(temperature)} />
+            </fieldset>
+        )
+    }
+}
+
+ReactDOM.render(
+    <Calculator />,
+    document.getElementById('app-remonterEtat')
+)
+```
+
+### Ajouter un deuxième champ
+
+Maintenant que nous avons mis en place le champ gérant la valeur de la température en celsius, nous allons mettre en place 
+le champ pour la version Fahrenheit, les deux devront rester synchronisés !
+
+Pour cela, reprennons le code du composant `<Calculator />` et utilisons le pour le nouveau composant `<TemperatureInput />` 
+qui possédera une props `scale` permettant d'identifier l'unité de mesure lié au champ de formulaire.
+
+Nous pouvons observer qu'à ce stade rien ne se synchronise, et qu'en plus nous avons perdu le composant `<BoilingVerdict />` 
+que nous avons dû retirer de `<Calculator />` puisque celui-ci n'avait plus accès à la valeur de la température, actuellement 
+enfermée dans `<TemperatureInput />`.
+
+```
+const scaleNames = {
+    c: 'Celsius',
+    f: 'Fahrenheit'
+};
+
+function BoilingVerdict(props) {
+    if(props.celsius >= 100) {
+        return <p>L'eau bout</p>
+    }
+
+    return <p>L'eau ne bout pas.</p>
+}
+
+class TemperatureInput extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+        this.state = { temperature: '' }
+    }
+
+    handleChange(e) {
+        this.setState({ temperature: e.target.value });
+    }
+    
+    render() {
+        const temperature = this.state.temperature;
+        return (
+            <fieldset>
+                <legend>Saisissez la température en Celsius :</legend>
+                <input value={temperature}
+                    onChange={this.handleChange} />
+            </fieldset>
+        )
+    }
+}
+
+class Calculator extends React.Component {
+    render() {
+        return (
+            <div>
+                <TemperatureInput scale="c" />
+                <TemperatureInput scale="f" />
+            </div>
+        )
+    }
+}
+
+{/* <BoilingVerdict celsius={parseFloat(temperature)} /> */}
+
+ReactDOM.render(
+    <Calculator />,
+    document.getElementById('app-remonterEtat')
+)
+```
+
+### Écrire des fonctions de conversion
+
+Nous passons rapidement l'étape de la création des fonctions de conversion permettant de passer d'une unité de mesure à l'autre. Ainsi que la fonction qui prendra en argument la température (type String) et une fonction de conversion à appeler. 
+
+```
+function toCelsius(fahrenheit) {
+  return (fahrenheit - 32) * 5 / 9;
+}
+
+function toFahrenheit(celsius) {
+  return (celsius * 9 / 5) + 32;
+}
+
+function tryConvert(temperature, convert) {
+  const input = parseFloat(temperature);
+  if (Number.isNaN(input)) {
+    return '';
+  }
+  const output = convert(input);
+  const rounded = Math.round(output * 1000) / 1000;
+  return rounded.toString();
+}
+```
+
+### Faire remonter l'état
+
+Nous arrivons maintenant au sujet principal de ce chapitre. Comment faire en sorte de partager la même information entre deux composants ?  
+En vérité c'est assez simple, il suffit d'extraire cette donnée, et de la placer dans l'ancêtre commun le plus proche. 
+
+Ici `<Calculator />` étant l'ancêtre commun le plus proche des deux composants `<TemperatureInput />` alors ce sera lui qui deviendra 
+la "source de vérité" pour la température des deux champs.  
+Il aura alors comme fonction de fournir à ces deux composant des valeurs qui seront cohérentes l'une avec l'autre.  
+Comme les props des composants `<TemperatureInput />` viennent du même composant `<Calculator />`, les deux champs seront donc toujours 
+synchronisés. 
+
+Pour réaliser cette opération, nous avons quelques modifications à effecuter : 
+1. On supprime l'état `this.state.temperature` du composant `<TemperatureInput />`
+2. De ce fait, on remplace `this.state.temperature` à l'intérieur du composant par `this.props.temperature`
+3. Les props étant en lecture seule, nous devons transformer le composant `<TemperatureInput />` afin qu'il devienne un composant 
+dit "contrôlé". Ainsi nous allons mettre en place deux nouvelles props `temperature` et `onTemperatureChange` qui seront fournies
+par l'ancêtre commun. Nous devons donc modifier la méthode `handleChange()` du composant `<TemperatureInput />` qui n'appelera plus 
+`this.setState()` mais `this.props.onTemperatureChange()`.
+4. Nous pouvons aussi modifier la légende du fieldset en fonction la props `this.props.scale` passée au composant `<TemperatureInput />`
+5. Créer deux nouvelles méthodes à l'intérieur du composant `<Calculator />` : `handleCelsiusChange` et `handleFahrenheitChange` 
+qui mettront à jours les valeurs d'état du composant `temperature` et `scale`. Ensuite nous n'avons plus qu'à passer ces deux méthodes 
+en props des composants `<TemperatureInput />` à l'intérieur de `onTemperatureChange` et le tour est joué. 
+
+```
+class TemperatureInput extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+    }
+
+    handleChange(e) {
+        this.props.onTemperatureChange(e.target.value);
+    }
+    
+    render() {
+        const temperature = this.props.temperature;
+        const scale = this.props.scale;
+        return (
+            <fieldset>
+                <legend>Saisissez la température en {scaleNames[scale]} :</legend>
+                <input value={temperature}
+                    onChange={this.handleChange} />
+            </fieldset>
+        )
+    }
+}
+
+class Calculator extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleCelsiusChange = this.handleCelsiusChange.bind(this);
+        this.handleFahrenheitChange = this.handleFahrenheitChange.bind(this);
+        this.state = { temperature: '', scale: 'c' }
+    }
+
+    handleCelsiusChange(temperature) {
+        this.setState({ scale: 'c', temperature });
+    }
+
+    handleFahrenheitChange(temperature) {
+        this.setState({ scale: 'f', temperature });
+    }
+
+    render() {
+        const temperature = this.state.temperature;
+        const scale = this.state.scale;
+        const celsius = scale === 'f' ? tryConvert(temperature, toCelsius) : temperature;
+        const fahrenheit = scale === 'c' ? tryConvert(temperature, toFahrenheit) : temperature;
+        return (
+            <div>
+                <TemperatureInput 
+                    scale="c" 
+                    temperature={celsius} 
+                    onTemperatureChange={this.handleCelsiusChange} />
+                <TemperatureInput 
+                    scale="f" 
+                    temperature={fahrenheit} 
+                    onTemperatureChange={this.handleFahrenheitChange} />
+                <BoilingVerdict celsius={parseFloat(temperature)} />
+            </div>
+        )
+    }
+}
+```
+
+Résumons ce qu'il se produit lorsque l'on édite l'un des champs : 
+1. React appelle la fonction spécifiée dans l'attribut `onChange` de l'input. Ici dans notre cas c'est donc `handleChange` du composant `<TemperatureInput />`. 
+2. Cette méthode appelle elle-même `this.props.onTemperatureChange` avec la valeur mise à jours.
+3. Les props `scale`, `temperature` et `onTemperatureChange` étant fournis par son composant parent `<Calculator />`, l'information remonte
+    handleCelsiusChange(temperature) {
+4. On voit que dans le composant `<Calculator />`, la props `onTemperatureChange` appelle soit la méthode `handleCelsiusChange` si
+l'input mis à jours est le champ correspondant à la valeur des celsius, soit la méthode `handleFahrenheitChange` si c'est l'input 
+correspondant aux fahrenheit.
+5. Ces méthodes ont pour but de mettre à jours les variables d'état du composant `<Calculator />` à l'aide de la fonction `this.setState()` 
+et donc de rafraîchir le composant avec la nouvelle valeur du champ et l'unité du champ modifié.
+6. React apelle donc la méthode `render()` afin de déterminer à quoi doit ressembler son UI. Ainsi, les deux fonctions de 
+conversion sont appelées et les valeurs des deux champs sont recalculées en fonction de la température actuelle et de l'unité 
+active. 
+7. Par effet domino, React appelle ensuite la méthode `render()` des composants `<TemperatureInput />` afin de déterminer à quoi doit 
+ressembler son UI. 
+8. Puis il fera de même avec la méthode `render()` du composant `<BoilingVerdict />` en lui fournissant la valeur de la température 
+en celsius dans ses props.
+9. Enfin, ReactDOM met à jour le DOM avec le verdict d'ébullition et retranscrit les valeurs de champs souhaitées. Le champ que l'on vient de modifier 
+reçoit sa valeur actuelle, le champ que l'on a pas touché reçoit la valeur convertie. 
+
+### Ce qu'il faut retenir
