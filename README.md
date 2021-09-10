@@ -1745,3 +1745,23 @@ en celsius dans ses props.
 reçoit sa valeur actuelle, le champ que l'on a pas touché reçoit la valeur convertie. 
 
 ### Ce qu'il faut retenir
+Globalement ce qu'il faut retenir de ce chapitre c'est qu'il ne doit n'y avoir qu'une seule "source de vérité" pour toute donnée 
+qui change dans une application React.  
+Dans un premier temps nous pouvons définir l'état dans le composant qui en a besoin, puis au fur et à mesure que l'on se rend compte 
+de la dépendance de cette donnée pour d'autres composants, nous devons faire remonter l'état dans l'ancêtre commun le plus proche.  
+Il faut à tout prix éviter de tenter de synchroniser l'état de différents composants, c'est une source d'erreur assez conséquente. 
+Nous devons donc privilégier les données qui se propagent du [**haut vers le bas**](https://fr.reactjs.org/docs/state-and-lifecycle.html#the-data-flows-down). 
+
+Bien sûr, faire remonter un état afin de le synchroniser à travers plusieurs composant nécessite l'écriture de plus de ligne de code 
+générique qu'avec une simple liaison de données bidirectionnelle, mais cela en vaut la peine. Les risques de bugs sont moindre et la 
+traçabilité des bugs se produisant est simplifiée.
+
+Lorsque quelque chose doit dériver des props ou de l'état d'un composant, cette chose ne devra pas figurer dans l'état du dit composant. 
+Ici par exemple, nous n'avons pas stocké à la fois `celsiusValue` et `fahrenheitValue` mais tout simplement la combinaison `scale` et 
+`temperature`.  
+La valeur de l'autre champ peut toujours être mise à jours à l'aide de la méthode `render()` du composant `<Calculator />` et de ces 
+données.  
+Ça nous permet aussi de réaliser des traitements sur le second champs tout en sauvegardant la valeur saisie par l'utilisateur. 
+
+Si un bug est constatable dans l'UI généré par React, nous pouvons utiliser les [**outils de développement React**](https://github.com/facebook/react/tree/master/packages/react-devtools) afin d'examiner les props et de parcourir l'arborescence des composant afin de déterminer l'origine du 
+composant responsable de la mise à jour de l'état qui amène au bug. 
