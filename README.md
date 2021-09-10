@@ -19,6 +19,7 @@ Version de React lors de la découverte : **v16.13.1**.
 9. Guide étape par étape : [**Listes et clés**](#listes-et-clés-doc)
 10. Guide étape par étape : [**Formulaires**](#formulaires-doc)
 11. Guide étape par étape : [**Faire remonter l'état**](#faire-remonter-létat-doc)
+12. Guide étape par étape : [**Composition ou héritage**](#composition-ou-héritage-doc)
 
 ## Objectifs
 Les objectifs à la suite de la découverte de la documentation vont être simple : 
@@ -1765,3 +1766,163 @@ données.
 
 Si un bug est constatable dans l'UI généré par React, nous pouvons utiliser les [**outils de développement React**](https://github.com/facebook/react/tree/master/packages/react-devtools) afin d'examiner les props et de parcourir l'arborescence des composant afin de déterminer l'origine du 
 composant responsable de la mise à jour de l'état qui amène au bug. 
+
+[**☝ Retour en haut de page**](#-découverte-de-react)
+## Composition ou héritage ([doc](https://fr.reactjs.org/docs/composition-vs-inheritance.html))
+
+En React il est déconseillé d'utiliser l'héritage, si le besoin se fait ressentir d'utiliser des fonctionnalités sans rapport avec 
+l'interface utilisateur entre les composants il est conseillé d'extraire ces fonctionnalités dans un module JavaScript séparé.  
+Les composants pourront alors importer cette fonction / objet ou classe sans avoir à l'étendre. 
+
+La raison pour laquelle on peut se passer du système d'héritage offert par le JavaScript est que React vient avec un puissant 
+modèle de composition. Nous allons voir maintenant différentes problématiques et nous chercherons à les résoudres à l'aide de 
+la composition. 
+
+### Délégation de contenu
+
+Il arrive que certains composant ne connaissent pas leurs enfants à l'avance. Par exemple, des composants comme les `Sidebar` 
+ou encore les fenêtre modale `Dialog` qui représentent des blocs génériques. 
+
+Pour de tels composants il est conseillé d'utiliser la prop spéciale `props.children`. Cette props permet de passer directement 
+les éléments enfants dans la sortie.  
+Ainsi, à l'intérieur des autres composant nous pourront passer des enfants quelconques en imbriquant le JSX. 
+
+```
+function FancyBorder(props) {
+  return (
+    <div className={"Fancyborder FancyBorder-" + props.color}>
+      {props.children}
+    </div>
+  )
+}
+
+function WelcomeDialog() {
+  return (
+    <FancyBorder color="blue">
+      <h1 className="Dialog-title">
+        Bienvenue
+      </h1>
+      <p className="Dialog-message">
+        Merci de visiter notre vaisseau spatiale (wsh) !
+      </p>
+    </FancyBorder>
+  )
+}
+```
+
+Tout ce qui va se trouver dans la balise JSX `<FancyBorder>` va se retrouver inclus dans la prop `children` est transmis au composant
+`<FancyBorder />`. Puisque `<FancyBorder />` utilise `props.children` à l'intérieur d'une balise div, les éléments passées apparaissent 
+dans la sortie finale. 
+
+Il arrive parfois que nous ayons besoin de plusieurs "trous" dans votre composant. Dans ce cas-là, nous pouvons créer notre propre 
+convention au lieu d'utiliser childre. 
+
+```
+function SplitPane(props) {
+  return (
+    <div className="SplitPane">
+      <div className="SplitPane-left">
+        {props.left}
+      </div>
+      <div className="SplitPane-right">
+        {props.right}
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <SplitPane
+      left={
+        <Contacts />
+      }
+      right={
+        <Chat />
+      } />
+  );
+}
+```
+
+Ici le traitement des composants `<Contacts />` et `<Chat />` peut paraître étrange mais cela est tout simple. Nous pouvons passer 
+en props tout un tas d'élément, y compris de simples objets comme des composants.  
+Il n'y a aucune limite à ce que l'on peut passer en props à l'intérieur de React. 
+
+### Spécialisation
+
+Parfois nous pouvons voir nos composants comme des cas particulier d'autres composants, et on pourrait être tenté de tout simplement 
+créer un composant qui étend ces composants. Par exemple, nous pourrions avoir un composant `<WelcomeDialog />` qui serait un cas 
+particulier du composant `<Dialog />`.
+Ici encore, il est conseillé d'utiliser la composition plutôt que l'héritage. Un composant "spécialisé" utilisera donc un composant 
+plus "générique" et le configure grâce aux props.
+
+```
+function Dialog(props) {
+  return (
+    <FancyBorder color="blue">
+      <h1 className="Dialog-title">
+        {props.title}
+      </h1>
+      <p className="Dialog-message">
+        {props.message}
+      </p>
+    </FancyBorder>
+  );
+}
+
+function WelcomeDialog() {
+  return (
+    <Dialog
+      title="Bienvenue"
+      message="Merci de visiter notre vaisseau spatial !" />
+  );
+}
+```
+
+La composition fonctionne tout aussi bien avec les composants à base de classe, voici ici un exemple encore plus complet : 
+
+```
+function Dialog(props) {
+  return (
+    <FancyBorder color="blue">
+      <h1 className="Dialog-title">
+        {props.title}
+      </h1>
+      <p className="Dialog-message">
+        {props.message}
+      </p>
+      {props.children}
+    </FancyBorder>
+  );
+}
+
+class SignUpDialog extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSignUp = this.handleSignUp.bind(this);
+    this.state = {login: ''};
+  }
+
+  render() {
+    return (
+      <Dialog title="Programme d'exploration de Mars"
+              message="Comment devrions-nous nous adresser à vous ?">
+        <input value={this.state.login}
+               onChange={this.handleChange} />
+        <button onClick={this.handleSignUp}>
+          Inscrivez-moi !
+        </button>
+      </Dialog>
+    );
+  }
+
+  handleChange(e) {
+    this.setState({login: e.target.value});
+  }
+
+  handleSignUp() {
+    alert(`Bienvenue à bord, ${this.state.login} !`);
+  }
+}
+```
