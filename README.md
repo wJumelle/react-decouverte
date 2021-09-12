@@ -1950,7 +1950,7 @@ La base de cette application sera une API JSON qui renverra les données suivant
 ];
 ```
 
-Nous avons cette maquette sur laquelle travailler 
+Nous avons cette maquette sur laquelle travailler  
 ![Maquette de l'application](https://fr.reactjs.org/static/1071fbcc9eed01fddc115b41e193ec11/d4770/thinking-in-react-mock.png)
 
 ### Étape 1 : décomposer l'interface utilisateur en une hiérarchie de composants
