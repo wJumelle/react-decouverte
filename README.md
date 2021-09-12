@@ -1951,7 +1951,7 @@ La base de cette application sera une API JSON qui renverra les données suivant
 ```
 
 Nous avons cette maquette sur laquelle travailler 
-[Maquette de l'application](https://fr.reactjs.org/static/1071fbcc9eed01fddc115b41e193ec11/d4770/thinking-in-react-mock.png)
+![Maquette de l'application](https://fr.reactjs.org/static/1071fbcc9eed01fddc115b41e193ec11/d4770/thinking-in-react-mock.png)
 
 ### Étape 1 : décomposer l'interface utilisateur en une hiérarchie de composants
 
@@ -1965,7 +1965,7 @@ qui stipule qu'un composant ne devrait idéalement faire qu'une seule chose.
 Ainsi, dès que l'on détecte une nouvelle fonctionnalité / un nouvel objet à l'intérieur d'un composant c'est qu'il faudra probablement l'extraire 
 du composant en en créant un nouveau. 
 
-[Maquette de l'application décomposée](https://fr.reactjs.org/static/eb8bda25806a89ebdc838813bdfa3601/6b2ea/thinking-in-react-components.png)  
+![Maquette de l'application décomposée](https://fr.reactjs.org/static/eb8bda25806a89ebdc838813bdfa3601/6b2ea/thinking-in-react-components.png)  
 
 Nous nous retrouvons donc ici avec cinq composants dans notre application : 
 1. FilterableProductTable (orange) : contient l’intégralité de l’exemple
