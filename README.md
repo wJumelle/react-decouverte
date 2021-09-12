@@ -20,6 +20,7 @@ Version de React lors de la découverte : **v16.13.1**.
 10. Guide étape par étape : [**Formulaires**](#formulaires-doc)
 11. Guide étape par étape : [**Faire remonter l'état**](#faire-remonter-létat-doc)
 12. Guide étape par étape : [**Composition ou héritage**](#composition-ou-héritage-doc)
+13. Guide étape par étape : [**Penser en React**](#penser-en-react-doc)
 
 ## Objectifs
 Les objectifs à la suite de la découverte de la documentation vont être simple : 
@@ -1926,3 +1927,56 @@ class SignUpDialog extends React.Component {
   }
 }
 ```
+
+[**☝ Retour en haut de page**](#-découverte-de-react)
+## Penser en React ([doc](https://fr.reactjs.org/docs/thinking-in-react.html))
+
+Ce chapitre va tourner autour de la conception d'une app pas à pas afin de voir comment orienter son développement autour de 
+React et de commencer à réfléchir en React plutôt qu'en JavaScript natif.
+Cette application sera basé sur un tableau de données qui sera filtrage et dans lequel on pourra effectuer une recherche.
+
+### Commençons par une maquette
+
+La base de cette application sera une API JSON qui renverra les données suivantes : 
+
+```
+[
+  {category: "Sporting Goods", price: "$49.99", stocked: true, name: "Football"},
+  {category: "Sporting Goods", price: "$9.99", stocked: true, name: "Baseball"},
+  {category: "Sporting Goods", price: "$29.99", stocked: false, name: "Basketball"},
+  {category: "Electronics", price: "$99.99", stocked: true, name: "iPod Touch"},
+  {category: "Electronics", price: "$399.99", stocked: false, name: "iPhone 5"},
+  {category: "Electronics", price: "$199.99", stocked: true, name: "Nexus 7"}
+];
+```
+
+Nous avons cette maquette sur laquelle travailler 
+[Maquette de l'application](https://fr.reactjs.org/static/1071fbcc9eed01fddc115b41e193ec11/d4770/thinking-in-react-mock.png)
+
+### Étape 1 : décomposer l'interface utilisateur en une hiérarchie de composants
+
+La première étape est donc de décomposer la maquette en composants et sous-composants et de leur attribuer un nom.
+Parfois le travail est déjà maché par les designeur qui donne déjà des noms à leurs calques dans leurs maquettes, donc il ne
+faut pas hésiter à communiquer entre les différents membres de l'équipe.
+
+Le plus dur est de savoir comment découper la maquette et donc de déterminer quelles parties devraient disposer de leurs propres
+composants. L'une des techniques les plus utile est le `[principe de responsabilité unique](https://fr.wikipedia.org/wiki/Principe_de_responsabilit%C3%A9_unique)` 
+qui stipule qu'un composant ne devrait idéalement faire qu'une seule chose.  
+Ainsi, dès que l'on détecte une nouvelle fonctionnalité / un nouvel objet à l'intérieur d'un composant c'est qu'il faudra probablement l'extraire 
+du composant en en créant un nouveau. 
+
+[Maquette de l'application décomposée](https://fr.reactjs.org/static/eb8bda25806a89ebdc838813bdfa3601/6b2ea/thinking-in-react-components.png)  
+
+Nous nous retrouvons donc ici avec cinq composants dans notre application : 
+1. FilterableProductTable (orange) : contient l’intégralité de l’exemple
+2. SearchBar (bleu) : reçoit toutes les données saisies par l’utilisateur
+3. ProductTable (vert) : affiche et filtre la collection de données en fonction des données saisies par l’utilisateur
+4. ProductCategoryRow (turquoise) : affiche un titre pour chaque catégorie
+5. ProductRow (rouge) : affiche une ligne pour chaque produit
+
+Si on hiérarchise les composants nous avons donc : 
+- `FilterableProductTable`
+  - `SearchBar`
+  - `ProductTable`
+    - `ProductCategoryRow`
+    - `ProductRow`

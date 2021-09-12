@@ -474,3 +474,21 @@ ReactDOM.render(
     <Calculator />,
     document.getElementById('app-remonterEtat')
 )
+
+// Penser en React
+class FilterableProductTable extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return (
+            <div></div>
+        )
+    }
+}
+
+ReactDOM.render(
+    <FilterableProductTable />,
+    document.getElementById('app-penserReact')
+)
