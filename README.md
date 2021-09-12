@@ -1960,7 +1960,7 @@ Parfois le travail est déjà maché par les designeur qui donne déjà des noms
 faut pas hésiter à communiquer entre les différents membres de l'équipe.
 
 Le plus dur est de savoir comment découper la maquette et donc de déterminer quelles parties devraient disposer de leurs propres
-composants. L'une des techniques les plus utile est le `[principe de responsabilité unique](https://fr.wikipedia.org/wiki/Principe_de_responsabilit%C3%A9_unique)` 
+composants. L'une des techniques les plus utile est le [`principe de responsabilité unique`](https://fr.wikipedia.org/wiki/Principe_de_responsabilit%C3%A9_unique) 
 qui stipule qu'un composant ne devrait idéalement faire qu'une seule chose.  
 Ainsi, dès que l'on détecte une nouvelle fonctionnalité / un nouvel objet à l'intérieur d'un composant c'est qu'il faudra probablement l'extraire 
 du composant en en créant un nouveau. 
