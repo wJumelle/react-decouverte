@@ -1980,3 +1980,34 @@ Si on hiérarchise les composants nous avons donc :
   - `ProductTable`
     - `ProductCategoryRow`
     - `ProductRow`
+
+### Étape 2 : construire une version statique avec React
+
+Pour commencer à développer un projet en React le plus simple est de partir sur une base statique, une UI inerte. La construction 
+d'une version statique nécessite peu de réflexion mais beaucoup de code.  
+A l'inverse, le passage en dynamique nécessitera beaucoup de réflexion mais peu de code. 
+
+Pour créer une version statique de notre application qui affiche notre modèle de données nous devons créer des composants qui en 
+réutilise d'autres et transmettent les données au moyen des props. Pourquoi les props et pas d'état local ? Tout simplement car 
+l'état local est réservé à l'intéractivité et à ce stade c'est pas ce que nous désirons développer. 
+
+Pour la construction de l'application il y a plusieurs façon de faire, soit on part du niveau le plus bas de l'application 
+(ici les composants `<ProductCategoryRow />` et `<ProductRow />`) et on se dirige en remontant vers le composant le plus haut (ici `<FilterableProductTable />`). 
+Soit on fait l'inverse, c'est à dire de partir du plus haut vers le plus bas.  
+Dans des cas plus simples, il est préféré généralement de partir de l'extérieur de l'application, alors que dans des cas plus complexe 
+avec des projets donc plus importants, il est plus facile de partir de l'intérieur et d'aller vers l'extérieur.  
+Cela permet notamment d'écrire des tests au fil de la construction de l'application. 
+
+Le travail étant terminé, nous disposons maintenant d'une bibliothèque de composants React réutilisables qui afficheront notre 
+modèle de données. Comme nous sommes encore dans une version statique pour le moment nos composants ne comprennent qu'une seule 
+méthode : `render()`.  
+Le composant le plus haut `<FilterableProductTable />` prendra donc en entrée (props) notre modèle de données et transmettra 
+les informations à ces descendants.  
+Ici, le flux de données **unidirectionnel* de React (appelé *liaison unidirectionnelle*) permet de maintenir la modularité et la rapidité de l'ensemble.
+
+> 💡 Props ou état ?
+> Il existe deux type de données dans le modèle de React : les props et l'état local. Les deux objets bruts de React sont différents l'un 
+> de l'autre. En effet, `props` est *passé* au composant (comme un argument à une fonction) tandis que `state` lui est géré à l'intérieur
+> du composant (comme le sont les variables déclarés à l'intérieur d'une fonction)
+> Doc : [**Quelle est la différence entre state et props ?**](https://fr.reactjs.org/docs/faq-state.html#what-is-the-difference-between-state-and-props)  
+> Article : [**Props vs State**](https://github.com/uberVU/react-guide/blob/master/props-vs-state.md)
