@@ -2008,6 +2008,6 @@ Ici, le flux de données **unidirectionnel* de React (appelé *liaison unidirect
 > 💡 Props ou état ?
 > Il existe deux type de données dans le modèle de React : les props et l'état local. Les deux objets bruts de React sont différents l'un 
 > de l'autre. En effet, `props` est *passé* au composant (comme un argument à une fonction) tandis que `state` lui est géré à l'intérieur
-> du composant (comme le sont les variables déclarés à l'intérieur d'une fonction)
+> du composant (comme le sont les variables déclarés à l'intérieur d'une fonction)  
 > Doc : [**Quelle est la différence entre state et props ?**](https://fr.reactjs.org/docs/faq-state.html#what-is-the-difference-between-state-and-props)  
 > Article : [**Props vs State**](https://github.com/uberVU/react-guide/blob/master/props-vs-state.md)
