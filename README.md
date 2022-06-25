@@ -625,7 +625,7 @@ Dans React on appelle cette phase **le montage**.
 A l'inverse, lorsqu'un composant est détruit / supprimé du DOM, on appelle cette phase **le démontage**. 
 Au cours de cette phase de démontage, il faudra veiller à la suppression du minuteur. 
 
-Les phases de montage et de démontage sont "écoutées" dans React par deux méthodes spéciales : `componentDidMount()` et `componentDidUnMount()` 
+Les phases de montage et de démontage sont "écoutées" dans React par deux méthodes spéciales : `componentDidMount()` et `componentWillUnmount()` 
 pour le démontage.
 
 Ce qui nous donne le code suivant : 
@@ -676,7 +676,7 @@ y passant en paramètre un objet correspondant à la nouvelle date. C'est grâce
 composant a changé, en conséquence React appelle la méthode `render()` du composant afin de déterminer ce qui devrait s'afficher à 
 l'écran avec ce nouvel état. React va faire la comparaison de la sortie retournée par le composant `<Clock />` et ce qui est 
 actuellement dans le DOM et détecter une différence. React met alors le DOM à jour en accord avec le nouveau rendu.
-4. Si le composant `<Clock />` est retiré du DOM, alors la méthode de cycle de vie `componentDidUnmount()` du composant sera appelée 
+4. Si le composant `<Clock />` est retiré du DOM, alors la méthode de cycle de vie `componentWillUnmount()` du composant sera appelée 
 par React pour que le minuteur soit arrêté et l'intervale supprimé. 
 
 ### Utiliser l'état local correctement 
@@ -881,11 +881,11 @@ class LoggingButton extends React.Component {
 }
 ```
 
-> ❗ Cependant, il faut faire très attention avec l'usage de la troisième méthode. En effet, à chaque rendu du composant une nouvelle 
+> ❗ Cependant, il faut faire très attention avec l'usage de la deuxième méthode. En effet, à chaque rendu du composant une nouvelle 
 > fonction de rappel sera créée.  
 > Dans la plus part des cas, ce n'est pas dérangeant, mais si nous passons cette fonction en props à des composants plus bas dans l'arbre 
 > ces composants risqueraient de forcer des ré-affichages superflus du composant.  
-> Il est donc déconseillé d'utiliser cette troisième méthode. 
+> Il est donc déconseillé d'utiliser cette deuxième méthode. 
 
 ### Passer des arguments à un gestionnaire d'événements
 
@@ -1091,7 +1091,7 @@ Il est aussi important de garder à l'esprit que dès que vous avez l'impression
 qu'il faut fragmenter vos composants en extrayant certains.
 
 ### Empêcher l'affichage d'un composant
-C'est assez rare, mais parfois vous allez voir masquer un élément quand bien même celui-ci figure dans le rendu d'un autre composant. 
+C'est assez rare, mais parfois vous allez vouloir masquer un élément quand bien même celui-ci figure dans le rendu d'un autre composant. 
 Cela est possible dans React à l'aide du mot-clé `null`.  
 En effet, tout composant retournant la valeur `null`, au lieu de son affichage habituel, ne sera pas affiché.  
 
