@@ -196,7 +196,7 @@ const element = (
 );
 ```
 
-### Explication du fonction de JSX
+### Explication du fonctionnement de JSX
 Le JSX représente au final des objets.  
 En effet, lorsque Babel compile du JSX, il produit des appels à **React.createElement()**. 
 
@@ -357,7 +357,7 @@ Voici ce qui se produit dans notre contexte :
 1. la méthode ReactDOM.render() est appelé avec en paramètre l'élément *elemComposants* qui est un élément React de type *componsants* `<Welcome />.` 
 2. React appelle le composant `<Welcome />` et lui transmets les props {name = 'Wilfried'}
 3. le composant `<Welcome />` retourne l'élément React `<h1>Bonjour, {props.name}</h1>` où {props.name} vaut Wilfried.
-4. ReactDOM met à jours efficacement le DOM pour correspond à la valeur retournée par le composant `<Welcome />`
+4. ReactDOM met à jours efficacement le DOM pour correspondre à la valeur retournée par le composant `<Welcome />`
 
 > 💡 Petit point autour des règles de nommages : React considère les composants commençant par une minuscule comme étant des balises du DOM. 
 > Par ex : `<div />` sera perçu comme une balise HTML `<div></div>`, tandis que `<Welcome />` représente lui un composant React. 
